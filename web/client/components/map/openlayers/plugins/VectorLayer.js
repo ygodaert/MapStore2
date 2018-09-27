@@ -7,7 +7,6 @@
  */
 
 var Layers = require('../../../../utils/openlayers/Layers');
-var SecurityUtils = require('../../../../utils/SecurityUtils');
 var markerIcon = require('../img/marker-icon.png');
 var markerShadow = require('../img/marker-shadow.png');
 var ol = require('openlayers');
@@ -149,7 +148,7 @@ var getSource = function(opts) {
         source.set('options', opts);
         if (opts.cluster) {
             return new ol.source.Cluster({
-                distance: 30,
+                distance: opts.distance || 30,
                 source: source
             });
         }
@@ -208,36 +207,6 @@ Layers.registerType('vector', {
 
             style = new ol.style.Style(style);
         }
-        const styleCache = {};
-        if (!style && options.cluster) {
-            style = function(feature) {
-                const size = feature.get('features').length;
-                let currentStyle = styleCache[size];
-                if (!currentStyle) {
-                    currentStyle = new ol.style.Style({
-                        image: new ol.style.Circle({
-                            radius: 15,
-                            stroke: new ol.style.Stroke({
-                                color: '#C64145',
-                                opacity: 0.3,
-                                width: 5
-                            }),
-                            fill: new ol.style.Fill({
-                                color: '#BA2536'
-                            })
-                        }),
-                        text: new ol.style.Text({
-                            text: size.toString(),
-                            fill: new ol.style.Fill({
-                                color: '#fff'
-                            })
-                        })
-                    });
-                    styleCache[size] = currentStyle;
-                }
-                return currentStyle;
-            };
-        }
 
         return new ol.layer.Vector({
             msId: options.id,
@@ -255,9 +224,10 @@ Layers.registerType('vector', {
             });
         }
         if (!isEqual(newOptions.params, oldOptions.params)) {
-            layer.getSource().set('options', newOptions);
-            layer.getSource().clear();
-            layer.getSource().refresh();
+            if (layer.getSource() && layer.getSource().getSource()) {
+                layer.getSource().getSource().clear();
+                layer.getSource().getSource().set('options', newOptions);
+            }
         }
     },
     render: () => {

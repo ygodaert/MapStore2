@@ -154,6 +154,19 @@ function layers(state = [], action) {
                 }
                 return assign({}, layer);
             });
+            const group = head(state.groups.filter(g => g.id === action.group || action.group.indexOf(`${g.id}.`) === 0));
+            if (group && group.exclusiveGroup && action.newProperties.visibility) {
+                const otherGroups = state.groups.filter(g => g.exclusiveGroup === group.exclusiveGroup && g.id !== group.id);
+                otherGroups.forEach(g => {
+                    newLayers = newLayers.map((layer) => {
+                        const layerGroup = layer.group || 'Default';
+                        if (layerGroup === g.id || layerGroup.indexOf(`${g.id}.`) === 0) {
+                            return assign({}, layer, { visibility: false });
+                        }
+                        return assign({}, layer);
+                    });
+                });
+            }
             return assign({}, state, {
                 flat: newLayers
             });

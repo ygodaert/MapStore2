@@ -85,6 +85,9 @@ var OpenlayersMap = React.createClass({
                 new ol.interaction.MouseWheelZoom({duration: 0})
             ]);
         }
+        if (this.props.mapOptions.additionalInteractions) {
+            interactions.extend(this.props.mapOptions.additionalInteractions);
+        }
         let controls = ol.control.defaults(assign({
             zoom: this.props.zoomControl,
             attributionOptions: ({
@@ -139,6 +142,7 @@ var OpenlayersMap = React.createClass({
                 } else if (tLng > 180) {
                     tLng = tLng - 360;
                 }
+                const feature = this.map.forEachFeatureAtPixel(event.pixel, (feature, layer) => ({feature, layer}));
                 this.props.onMouseMove({
                     y: coords[1] || 0.0,
                     x: tLng || 0.0,
@@ -146,7 +150,8 @@ var OpenlayersMap = React.createClass({
                     pixel: {
                         x: event.pixel[0],
                         y: event.pixel[1]
-                    }
+                    },
+                    feature
                 });
             }
         });
