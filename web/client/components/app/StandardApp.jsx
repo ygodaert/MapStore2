@@ -49,7 +49,7 @@ class StandardApp extends React.Component {
     };
 
     state = {
-        store: null
+        initialized: false
     };
 
     addProjDefinitions(config) {
@@ -88,9 +88,6 @@ class StandardApp extends React.Component {
             });
             this.store = this.props.appStore(this.props.pluginsDef.plugins, opts);
             this.props.onStoreInit(this.store);
-            this.setState({
-                store: this.store
-            });
 
             if (!opts.persist) {
                 onInit(config);
@@ -103,24 +100,35 @@ class StandardApp extends React.Component {
         const {plugins, requires} = this.props.pluginsDef;
         const {pluginsDef, appStore, initialActions, appComponent, mode, ...other} = this.props;
         const App = this.props.appComponent;
-        return this.state.store ?
-            <Provider store={this.state.store}>
+        return this.state.initialized ?
+            <Provider store={this.store}>
                 <App {...other} plugins={assign(PluginsUtils.getPlugins(plugins), {requires})}/>
             </Provider>
-         : null;
+            : (<span><div className="_ms2_init_spinner _ms2_init_center"><div></div></div>
+                <div className="_ms2_init_text _ms2_init_center">Loading MapStore</div></span>);
     }
-    init = (config) => {
-        this.store.dispatch(changeBrowserProperties(ConfigUtils.getBrowserProperties()));
-        this.store.dispatch(localConfigLoaded(config));
-        this.addProjDefinitions(config);
-        const locale = LocaleUtils.getUserLocale();
-        this.store.dispatch(loadLocale(null, locale));
+    afterInit = () => {
         if (this.props.printingEnabled) {
             this.store.dispatch(loadPrintCapabilities(ConfigUtils.getConfigProp('printUrl')));
         }
         this.props.initialActions.forEach((action) => {
             this.store.dispatch(action());
         });
+        this.setState({
+            initialized: true
+        });
+    };
+    init = (config) => {
+        this.store.dispatch(changeBrowserProperties(ConfigUtils.getBrowserProperties()));
+        this.store.dispatch(localConfigLoaded(config));
+        this.addProjDefinitions(config);
+        const locale = LocaleUtils.getUserLocale();
+        this.store.dispatch(loadLocale(null, locale));
+        if (this.props.onInit) {
+            this.props.onInit(this.store, this.afterInit.bind(this, [config]), config);
+        } else {
+            this.afterInit(config);
+        }
     };
     /**
      * It returns an object of the same structure of the initialState but replacing strings like "{someExpression}" with the result of the expression between brackets.
