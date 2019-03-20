@@ -14,6 +14,7 @@ var url = require('url');
 
 const assign = require('object-assign');
 const {isEqual} = require('lodash');
+const CoordinatesUtils = require('../../../../utils/CoordinatesUtils');
 
 const image = new ol.style.Circle({
   radius: 5,
@@ -162,10 +163,13 @@ var getSource = function(opts) {
         if (Array.isArray(opts.features)) {
             featureCollection = { "type": "FeatureCollection", features: featureCollection };
         }
-        features = (new ol.format.GeoJSON()).readFeatures(featureCollection);
         if (featuresCrs !== layerCrs) {
-            features.forEach((f) => f.getGeometry().transform(featuresCrs, layerCrs));
+            featureCollection = CoordinatesUtils.reprojectGeoJson(featureCollection, featuresCrs, layerCrs);
         }
+        features = (new ol.format.GeoJSON()).readFeatures(featureCollection);
+        /*if (featuresCrs !== layerCrs) {
+            features.forEach((f) => f.getGeometry().transform(featuresCrs, layerCrs));
+        }*/
     }
 
     return new ol.source.Vector({

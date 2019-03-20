@@ -108,7 +108,9 @@ var OpenlayersMap = React.createClass({
         map.on('singleclick', (event) => {
             if (this.props.onClick) {
                 let pos = event.coordinate.slice();
-                let coords = ol.proj.toLonLat(pos, this.props.projection);
+                // let coords = ol.proj.toLonLat(pos, this.props.projection);
+                let coordsObj = CoordinatesUtils.reproject(pos, this.props.projection, 'EPSG:4326');
+                let coords = [coordsObj.x, coordsObj.y];
                 let tLng = (( coords[0] / 360) % 1) * 360;
                 if (tLng < -180) {
                     tLng = tLng + 360;
@@ -135,7 +137,8 @@ var OpenlayersMap = React.createClass({
         map.on('pointermove', (event) => {
             if (!event.dragging && event.coordinate) {
                 let pos = event.coordinate.slice();
-                let coords = ol.proj.toLonLat(pos, this.props.projection);
+                let coordsObj = CoordinatesUtils.reproject(pos, this.props.projection, 'EPSG:4326');
+                let coords = [coordsObj.x, coordsObj.y];
                 let tLng = (( coords[0] / 360) % 1) * 360;
                 if (tLng < -180) {
                     tLng = tLng + 360;
