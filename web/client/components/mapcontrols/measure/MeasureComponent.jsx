@@ -58,7 +58,8 @@ const MeasureComponent = React.createClass({
         withReset: React.PropTypes.bool,
         formatLength: React.PropTypes.func,
         formatArea: React.PropTypes.func,
-        formatBearing: React.PropTypes.func
+        formatBearing: React.PropTypes.func,
+        style: React.PropTypes.object
     },
     contextTypes: {
         messages: React.PropTypes.object
@@ -81,7 +82,8 @@ const MeasureComponent = React.createClass({
             withReset: false,
             formatLength: (uom, value) => measureUtils.getFormattedLength(uom, value),
             formatArea: (uom, value) => measureUtils.getFormattedArea(uom, value),
-            formatBearing: (value) => measureUtils.getFormattedBearingValue(round(value || 0, 6))
+            formatBearing: (value) => measureUtils.getFormattedBearingValue(round(value || 0, 6)),
+            style: {}
         };
     },
     shouldComponentUpdate(nextProps) {
@@ -182,7 +184,7 @@ const MeasureComponent = React.createClass({
     },
     render() {
         return (
-            <Panel id={this.props.id}>
+            <Panel id={this.props.id} style={this.props.style}>
                 {this.props.useButtonGroup ? this.renderButtonGroup() : this.renderButtons() }
                 {this.renderPanel()}
             </Panel>
