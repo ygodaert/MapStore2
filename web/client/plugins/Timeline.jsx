@@ -12,8 +12,8 @@ const { createSelector } = require('reselect');
 const Timeline = require('./timeline/Timeline');
 const InlineDateTimeSelector = require('../components/time/InlineDateTimeSelector');
 const Toolbar = require('../components/misc/toolbar/Toolbar');
-const { offsetEnabledSelector, currentTimeSelector, layersWithTimeDataSelector } = require('../selectors/dimension');
-const { currentTimeRangeSelector, rangeSelector } = require('../selectors/timeline');
+const { offsetEnabledSelector, currentTimeSelector } = require('../selectors/dimension');
+const { currentTimeRangeSelector, isVisible, rangeSelector, timelineLayersSelector } = require('../selectors/timeline');
 const { mapLayoutValuesSelector } = require('../selectors/maplayout');
 
 const { withState, compose, branch, renderNothing, withStateHandlers, withProps, defaultProps } = require('recompose');
@@ -44,14 +44,16 @@ const isValidOffset = (start, end) => moment(end).diff(start) > 0;
 const TimelinePlugin = compose(
     connect(
         createSelector(
-            layersWithTimeDataSelector,
+            isVisible,
+            timelineLayersSelector,
             currentTimeSelector,
             currentTimeRangeSelector,
             offsetEnabledSelector,
             playbackRangeSelector,
             statusSelector,
             rangeSelector,
-            (layers, currentTime, currentTimeRange, offsetEnabled, playbackRange, status, viewRange) => ({
+            (visible, layers, currentTime, currentTimeRange, offsetEnabled, playbackRange, status, viewRange) => ({
+                visible,
                 layers,
                 currentTime,
                 currentTimeRange,
@@ -67,7 +69,7 @@ const TimelinePlugin = compose(
             setPlaybackRange: selectPlaybackRange,
             moveRangeTo: onRangeChanged
         }),
-    branch(({ layers = [] }) => Object.keys(layers).length === 0, renderNothing),
+    branch(({ visible = true, layers = [] }) => !visible || Object.keys(layers).length === 0, renderNothing),
     withState('options', 'setOptions', {collapsed: true}),
     //
     // ** Responsiveness to container.
@@ -107,7 +109,7 @@ const TimelinePlugin = compose(
                     const availableWidth = containerWidth - right - left - marginLeft - marginRight;
                     return {
                         hide: availableWidth < minWidth,
-                        compactToolbar: availableWidth < 610,
+                        compactToolbar: availableWidth < 880,
                         style: {...style, ...mapLayoutStyle, minWidth}
                     };
                 }
@@ -182,6 +184,7 @@ const TimelinePlugin = compose(
 
             {offsetEnabled // if range is present and configured, show the floating start point.
                 && <InlineDateTimeSelector
+                clickable={!collapsed}
                 glyph="range-start"
                 onIconClick= {(time, type) => status !== "PLAY" && zoomToCurrent(time, type, viewRange, currentTimeRange)}
                 tooltip={<Message msgId="timeline.rangeStart"/>}
@@ -201,6 +204,7 @@ const TimelinePlugin = compose(
                 {offsetEnabled && currentTimeRange
                     // if range enabled, show time end in the timeline
                     ? <InlineDateTimeSelector
+                        clickable={!collapsed}
                         glyph={'range-end'}
                         onIconClick= {(time, type) => status !== "PLAY" && zoomToCurrent(time, type, viewRange, currentTimeRange)}
                         tooltip={<Message msgId="timeline.rangeEnd"/>}
@@ -209,6 +213,7 @@ const TimelinePlugin = compose(
                         onUpdate={end => status !== "PLAY" && isValidOffset(currentTime, end) && setOffset(end)} />
                     : // show current time if using single time
                     <InlineDateTimeSelector
+                        clickable={!collapsed}
                         glyph={'time-current'}
                         showButtons
                         onIconClick= {(time, type) => status !== "PLAY" && zoomToCurrent(time, type, viewRange)}
@@ -234,6 +239,7 @@ const TimelinePlugin = compose(
                                 glyph: 'time-offset',
                                 bsStyle: offsetEnabled ? 'success' : 'primary',
                                 active: offsetEnabled,
+                                disabled: status === "PLAY",
                                 tooltip: <Message msgId={!offsetEnabled ? "timeline.enableRange" : "timeline.disableRange"} />,
                                 onClick: () => {
                                     if (status !== "PLAY") onOffsetEnabled(!offsetEnabled);
@@ -241,7 +247,11 @@ const TimelinePlugin = compose(
                                 }
                             }
                         ]} />
-                    <Playback {...playbackItem}/>
+                    <Playback
+                        {...playbackItem}
+                        settingsStyle={{
+                            right: (collapsed || compactToolbar) ? 40 : 'unset'
+                        }}/>
                 </div>
 
                 <Button
@@ -263,10 +273,14 @@ const TimelinePlugin = compose(
 );
 
 const assign = require('object-assign');
-
+const TimelineToggle = require('./timeline/TimelineToggle');
 module.exports = {
     TimelinePlugin: assign(TimelinePlugin, {
-        disablePluginIf: "{state('mapType') === 'cesium'}"
+        disablePluginIf: "{state('mapType') === 'cesium'}",
+        WidgetsTray: {
+            tool: <TimelineToggle />,
+            position: 0
+        }
     }),
     reducers: {
         dimension: require('../reducers/dimension'),

@@ -9,7 +9,6 @@
 const React = require('react');
 
 const { Glyphicon: GlyphiconRB } = require('react-bootstrap');
-
 const BorderLayout = require('../layout/BorderLayout');
 const emptyState = require('../misc/enhancers/emptyState');
 const withLocal = require("../misc/enhancers/localizedProps");
@@ -27,11 +26,22 @@ const SideGrid = emptyState(
     }
 )(require('../misc/cardgrids/SideGrid'));
 
+// get the text to use in the icon
+const getFormatText = (format) => {
+    const text = {
+        sld: 'SLD',
+        css: 'CSS',
+        mbstyle: 'MBS'
+    };
+    return text[format] || format || '';
+};
+
 /**
  * Component for rendering a grid of style templates.
  * @memberof components.styleeditor
  * @name StyleList
  * @class
+ * @prop {bool} showDefaultStyleIcon show icon near default style
  * @prop {string} enabledStyle name of style in use
  * @prop {string} defaultStyle name of default style
  * @prop {array} availableStyles array of all available styles, eg: [{TYPE_NAME: "WMS_1_3_0.Style", filename: "style.sld", format: "sld", languageVersion: {version: "1.0.0"}, legendURL: [{…}], name: "point", title: "Title", _abstract: ""}]
@@ -42,6 +52,7 @@ const SideGrid = emptyState(
  */
 
 const StyleList = ({
+    showDefaultStyleIcon,
     enabledStyle,
     defaultStyle,
     availableStyles = [],
@@ -54,6 +65,7 @@ const StyleList = ({
     onFilter = () => {}
 }) => (
         <BorderLayout
+            className="ms-style-editor-list"
             header={
                 <Filter
                     filterPlaceholder="styleeditor.styleListfilterPlaceholder"
@@ -80,16 +92,14 @@ const StyleList = ({
                                 backgroundColor="#333333"
                                 texts={[
                                     {
-                                        text: style.format.toUpperCase(),
+                                        text: getFormatText(style.format).toUpperCase(),
                                         fill: formatColors[style.format] || '#f2f2f2',
                                         style: {
                                             fontSize: 70,
                                             fontWeight: 'bold'
                                         }
                                     }]}/> || <Glyphicon glyph="geoserver" />,
-                        tools: defaultStyle === style.name &&
-                        <Glyphicon glyph="star" tooltipId="styleeditor.defaultStyle"/>
-                        || <Glyphicon glyph="ok" tooltipId="styleeditor.availableStyle"/>
+                        tools: showDefaultStyleIcon && defaultStyle === style.name ? <Glyphicon glyph="star" tooltipId="styleeditor.defaultStyle"/> : null
                     }))} />
         </BorderLayout>
     );

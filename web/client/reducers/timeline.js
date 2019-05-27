@@ -1,7 +1,7 @@
 const { RANGE_CHANGED } = require('../actions/timeline');
 const { REMOVE_NODE } = require('../actions/layers');
 const { RESET_CONTROLS } = require('../actions/controls');
-const { RANGE_DATA_LOADED, LOADING, SELECT_LAYER, MOUSE_EVENT } = require('../actions/timeline');
+const { RANGE_DATA_LOADED, LOADING, SELECT_LAYER, SET_COLLAPSED } = require('../actions/timeline');
 const { set } = require('../utils/ImmutableUtils');
 const { assign, pickBy, has } = require('lodash');
 
@@ -48,9 +48,15 @@ const { assign, pickBy, has } = require('lodash');
 
  */
 module.exports = (state = {
-    settings: {autoSelect: true} // selects the first layer available as guide layer. This is a configuration only setting for now
+    settings: {
+        autoSelect: true, // selects the first layer available as guide layer. This is a configuration only setting for now
+        collapsed: false
+    }
 }, action) => {
     switch (action.type) {
+        case SET_COLLAPSED: {
+            return set(`settings.collapsed`, action.collapsed, state);
+        }
         case RANGE_CHANGED: {
             return set(`range`, {
                 start: action.start,
@@ -66,13 +72,10 @@ module.exports = (state = {
             }, state);
         }
         case LOADING: {
-            return set(`loading[${action.layerId}]`, action.loading, state);
+            return action.layerId ? set(`loading[${action.layerId}]`, action.loading, state) : set(`loading.timeline`, action.loading, state);
         }
         case SELECT_LAYER: {
             return set('selectedLayer', action.layerId, state);
-        }
-        case MOUSE_EVENT: {
-            return set('mouseEvent', action.eventData, state);
         }
         case REMOVE_NODE: {
             let newState = state;

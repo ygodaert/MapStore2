@@ -78,10 +78,11 @@ module.exports = playbackEnhancer(({
     hasPrevious,
     hasNext,
     showSettings,
-    onShowSettings = () => {}
+    onShowSettings = () => {},
+    settingsStyle = {}
 }) =>
 ( <div style={{display: 'flex'}}>
-        { (status !== statusMap.PLAY && status !== statusMap.PAUSE) && showSettings && <Settings />}
+        { (status !== statusMap.PLAY && status !== statusMap.PAUSE) && showSettings && <Settings style={settingsStyle}/>}
         <Toolbar
             btnDefaultProps={{
                 className: 'square-button-md',
@@ -95,6 +96,8 @@ module.exports = playbackEnhancer(({
                     tooltip: <Message msgId={"playback.backwardStep"} />
                 }, {
                     glyph: status === statusMap.PLAY ? "pause" : "play",
+                    active: status === statusMap.PLAY || status === statusMap.PAUSE,
+                    disabled: !hasNext,
                     bsStyle: status === statusMap.PLAY || status === statusMap.PAUSE ? "success" : "primary",
                     onClick: () => status === statusMap.PLAY ? pause() : play(),
                     tooltipId: status === statusMap.PLAY

@@ -12,6 +12,7 @@ const { Form, FormGroup, FormControl: FormControlRB, ControlLabel, Alert } = req
 
 const BorderLayout = require('../layout/BorderLayout');
 const emptyState = require('../misc/enhancers/emptyState');
+const Loader = require('../misc/Loader');
 
 const SquareCard = require('../misc/cardgrids/SquareCard');
 const withLocal = require("../misc/enhancers/localizedProps");
@@ -20,6 +21,7 @@ const Filter = withLocal('filterPlaceholder')(require('../misc/Filter'));
 const FormControl = withLocal('placeholder')(FormControlRB);
 
 const ResizableModal = require('../misc/ResizableModal');
+const Portal = require('../misc/Portal');
 const Message = require('../I18N/Message');
 const HTML = require('../I18N/HTML');
 
@@ -81,7 +83,8 @@ const StyleTemplates = ({
     onSelect = () => {},
     onClose = () => {},
     onSave = () => {},
-    onUpdate = () => {}
+    onUpdate = () => {},
+    loading
 }) => (
         <BorderLayout
             header={
@@ -91,7 +94,7 @@ const StyleTemplates = ({
                         filterText={filterText}
                         onFilter={onFilter}/>
                     <div className="text-center">
-                        <small><Message msgId="styleeditor.createStyleFromTemplate"/></small>
+                        <small>{loading ? <Loader size={15} style={{ display: 'inline-block' }}/> : <Message msgId="styleeditor.createStyleFromTemplate"/>}</small>
                     </div>
                 </div>
             }>
@@ -113,36 +116,42 @@ const StyleTemplates = ({
                 items={templates
                     .filter(({title}) => !filterText || filterText && title.indexOf(filterText) !== -1)
                     .filter(({types, format}) => (!types || head(types.filter(type => type === geometryType)) && availableFormats.indexOf(format) !== -1))
-                    .map(styleTemplate => ({ ...styleTemplate, selected: styleTemplate.styleId === selectedStyle }))}/>
-            <ResizableModal
-                show={!!add}
-                fitContent
-                title={<Message msgId="styleeditor.createStyleModalTitle"/>}
-                onClose={() => onClose()}
-                buttons={[
-                    {
-                        text: <Message msgId="save"/>,
-                        bsStyle: 'primary',
-                        disabled: !validateAlphaNumeric(styleSettings),
-                        onClick: () => onSave(styleSettings)
-                    }
-                ]}>
-                <Form>
-                    <FormGroup controlId="styleTitle" validationState={!validateAlphaNumeric(styleSettings) && 'error'}>
-                        {formFields.map(({title, placeholder, key}) => (<span key={key}>
-                            <ControlLabel>{title}</ControlLabel>
-                            <FormControl
-                                type="text"
-                                defaultValue={styleSettings[key]}
-                                placeholder={placeholder}
-                                onChange={event => onUpdate({...styleSettings, [key]: event.target.value})}/>
-                        </span>))}
-                    </FormGroup>
-                    {!validateAlphaNumeric(styleSettings) && <Alert style={{margin: 0}} bsStyle="danger">
-                        <HTML msgId="styleeditor.titleRequired"/>
-                    </Alert>}
-                </Form>
-            </ResizableModal>
+                    .map(styleTemplate => ({
+                        ...styleTemplate,
+                        selected: styleTemplate.styleId === selectedStyle,
+                        disabled: loading
+                        }))}/>
+            <Portal>
+                <ResizableModal
+                    show={!!add}
+                    fitContent
+                    title={<Message msgId="styleeditor.createStyleModalTitle"/>}
+                    onClose={() => onClose()}
+                    buttons={[
+                        {
+                            text: <Message msgId="save"/>,
+                            bsStyle: 'primary',
+                            disabled: !validateAlphaNumeric(styleSettings),
+                            onClick: () => onSave(styleSettings)
+                        }
+                    ]}>
+                    <Form>
+                        <FormGroup controlId="styleTitle" validationState={!validateAlphaNumeric(styleSettings) && 'error'}>
+                            {formFields.map(({title, placeholder, key}) => (<span key={key}>
+                                <ControlLabel>{title}</ControlLabel>
+                                <FormControl
+                                    type="text"
+                                    defaultValue={styleSettings[key]}
+                                    placeholder={placeholder}
+                                    onChange={event => onUpdate({...styleSettings, [key]: event.target.value})}/>
+                            </span>))}
+                        </FormGroup>
+                        {!validateAlphaNumeric(styleSettings) && <Alert style={{margin: 0}} bsStyle="danger">
+                            <HTML msgId="styleeditor.titleRequired"/>
+                        </Alert>}
+                    </Form>
+                </ResizableModal>
+            </Portal>
         </BorderLayout>
     );
 

@@ -6,6 +6,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 const axios = require('../../libs/ajax');
+const { uniqBy } = require('lodash');
 const { getNameParts } = require('../../utils/StyleEditorUtils');
 
 /**
@@ -73,6 +74,46 @@ const Api = {
                                 ...currentAvailableStyle,
                                 ...styles
                             ]
+                        }
+                    }
+                };
+                return layerObj;
+            })
+            .then(layerObj => axios.put(url, layerObj).then(() => layerObj));
+    },
+    /**
+    * Update default styles of geoserver layer object
+    * @memberof api.geoserver
+    * @param {object} params {baseUrl, layerName, styleName, options = {}}
+    * @param {string} params.baseUrl base url of GeoServer eg: /geoserver/
+    * @param {array} params.styleName name of the new default style
+    * @param {string} params.layerName name of layer
+    * @return {object} geoserver layer object with updated styles
+    */
+    updateDefaultStyle: ({baseUrl, layerName, styleName, options = {}}) => {
+        const { name, workspace } = getNameParts(layerName);
+        const url = `${baseUrl}rest/${workspace && `workspaces/${workspace}/` || ''}layers/${name}.json`;
+        return axios.get(url, options)
+            .then(({ data }) => {
+                const layer = data.layer || {};
+                const currentAvailableStyle = layer.styles && layer.styles.style || {};
+                const defaultStyle = layer.defaultStyle || {};
+
+                // add old default to available styles to ensure to display it in the style list
+                const style = uniqBy([
+                    defaultStyle,
+                    ...currentAvailableStyle
+                ], 'name');
+
+                const layerObj = {
+                    'layer': {
+                        ...layer,
+                        defaultStyle: {
+                            name: styleName
+                        },
+                        'styles': {
+                            '@class': 'linked-hash-set',
+                            style
                         }
                     }
                 };

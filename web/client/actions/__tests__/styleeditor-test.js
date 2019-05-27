@@ -24,6 +24,7 @@ const {
     DELETE_STYLE,
     INIT_STYLE_SERVICE,
     SET_EDIT_PERMISSION,
+    SET_DEFAULT_STYLE,
     updateTemporaryStyle,
     updateStatus,
     toggleStyleEditor,
@@ -38,7 +39,8 @@ const {
     editStyleCode,
     deleteStyle,
     initStyleService,
-    setEditPermissionStyleEditor
+    setEditPermissionStyleEditor,
+    setDefaultStyle
 } = require('../styleeditor');
 
 describe('Test the styleeditor actions', () => {
@@ -49,12 +51,14 @@ describe('Test the styleeditor actions', () => {
         const code = '* { stroke: #333333; }';
         const format = 'css';
         const init = true;
+        const languageVersion = { version: '1.0.0' };
         const retval = updateTemporaryStyle({
             temporaryId,
             templateId,
             code,
             format,
-            init
+            init,
+            languageVersion
         });
         expect(retval).toExist();
         expect(retval.type).toBe(UPDATE_TEMPORARY_STYLE);
@@ -63,6 +67,7 @@ describe('Test the styleeditor actions', () => {
         expect(retval.code).toBe(code);
         expect(retval.format).toBe(format);
         expect(retval.init).toBe(init);
+        expect(retval.languageVersion).toEqual(languageVersion);
     });
     it('updateStatus', () => {
         const status = 'edit';
@@ -90,13 +95,15 @@ describe('Test the styleeditor actions', () => {
         const code = '* { stroke: #333333; }';
         const format = 'css';
         const init = true;
-        const retval = selectStyleTemplate({ code, templateId, format, init });
+        const languageVersion = { version: '1.0.0' };
+        const retval = selectStyleTemplate({ code, templateId, format, init, languageVersion });
         expect(retval).toExist();
         expect(retval.type).toBe(SELECT_STYLE_TEMPLATE);
         expect(retval.templateId).toBe(templateId);
         expect(retval.code).toBe(code);
         expect(retval.format).toBe(format);
         expect(retval.init).toBe(init);
+        expect(retval.languageVersion).toEqual(languageVersion);
     });
     it('createStyle', () => {
         const settings = { title: 'Title', _abstract: ''};
@@ -167,5 +174,10 @@ describe('Test the styleeditor actions', () => {
         expect(retval).toExist();
         expect(retval.type).toBe(SET_EDIT_PERMISSION);
         expect(retval.canEdit).toBe(canEdit);
+    });
+    it('setDefaultStyle', () => {
+        const retval = setDefaultStyle();
+        expect(retval).toExist();
+        expect(retval.type).toBe(SET_DEFAULT_STYLE);
     });
 });

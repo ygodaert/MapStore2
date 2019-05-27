@@ -104,8 +104,8 @@ const normalizePoint = (point) => {
 };
 
 const reproject = (point, source, dest, normalize = true) => {
-    const sourceProj = Proj4js.defs(source) ? new Proj4js.Proj(source) : null;
-    const destProj = Proj4js.defs(dest) ? new Proj4js.Proj(dest) : null;
+    const sourceProj = source && Proj4js.defs(source) ? new Proj4js.Proj(source) : null;
+    const destProj = dest && Proj4js.defs(dest) ? new Proj4js.Proj(dest) : null;
     if (sourceProj && destProj) {
         let p = isArray(point) ? Proj4js.toPoint(point) : Proj4js.toPoint([point.x, point.y]);
         const transformed = assign({}, source === dest ? p : Proj4js.transform(sourceProj, destProj, p), {srs: dest});
@@ -474,7 +474,7 @@ const CoordinatesUtils = {
     getGeoJSONExtent: function(geoJSON) {
         let newExtent = [Infinity, Infinity, -Infinity, -Infinity];
         const reduceCollectionExtent = (extent, collectionElement) => {
-            let ext = this.getGeoJSONExtent(collectionElement);
+            let ext = CoordinatesUtils.getGeoJSONExtent(collectionElement);
             if (this.isValidExtent(ext)) {
                 return this.extendExtent(ext, extent);
             }
@@ -505,7 +505,7 @@ const CoordinatesUtils = {
             if (geoJSON.type === "FeatureCollection") {
                 return geoJSON.features.reduce(reduceCollectionExtent, newExtent);
             } else if (geoJSON.type === "Feature" && geoJSON.geometry) {
-                return this.getGeoJSONExtent(geoJSON.geometry);
+                return CoordinatesUtils.getGeoJSONExtent(geoJSON.geometry);
             }
         }
 

@@ -9,6 +9,7 @@
 const React = require('react');
 const Toolbar = require('../misc/toolbar/Toolbar');
 const ResizableModal = require('../misc/ResizableModal');
+const Portal = require('../misc/Portal');
 const Message = require('../I18N/Message');
 const { Alert } = require('react-bootstrap');
 
@@ -21,6 +22,7 @@ const { Alert } = require('react-bootstrap');
  * @prop {array|node} buttons additional buttons, array of buttons object or toolbar node
  * @prop {bool} editEnabled enable/disable edit/templates buttons
  * @prop {array} defaultStyles array of style names not editable
+ * @prop {bool} enableSetDefaultStyle enable/disable set default style button
  * @prop {bool} loading loading state
  */
 
@@ -35,6 +37,7 @@ const StyleToolbar = ({
     loading,
     selectedStyle,
     editEnabled,
+    enableSetDefaultStyle,
     defaultStyles = [
         'generic',
         'point',
@@ -48,7 +51,9 @@ const StyleToolbar = ({
     onDelete = () => {},
     onSelectStyle = () => {},
     onEditStyle = () => {},
-    onUpdate = () => {}
+    onUpdate = () => {},
+    onSetDefault = () => {},
+    disableCodeEditing
 }) => (
     <div>
         <Toolbar
@@ -98,7 +103,7 @@ const StyleToolbar = ({
                     glyph: 'code',
                     tooltipId: 'styleeditor.editSelectedStyle',
                     visible: !status && editEnabled ? true : false,
-                    disabled: !!loading || defaultStyles.indexOf(selectedStyle) !== -1,
+                    disabled: !!loading || defaultStyles.indexOf(selectedStyle) !== -1 || disableCodeEditing,
                     onClick: () => onEditStyle()
                 },
                 {
@@ -139,16 +144,25 @@ const StyleToolbar = ({
                         });
                     }
                 },
+                {
+                    glyph: 'star',
+                    tooltipId: 'styleeditor.setDefaultStyle',
+                    disabled: !!loading || defaultStyles.indexOf(selectedStyle) !== -1 || !selectedStyle,
+                    visible: enableSetDefaultStyle && !status && editEnabled ? true : false,
+                    onClick: () => onSetDefault()
+                },
                 ...(!!status ? [] : buttons)
             ]} />
-        <ResizableModal
-            show={showModal}
-            fitContent
-            title={showModal && showModal.title}
-            onClose={() => onShowModal(null)}
-            buttons={showModal && showModal.buttons}>
-            {showModal && showModal.message}
-        </ResizableModal>
+        <Portal>
+            <ResizableModal
+                show={showModal}
+                fitContent
+                title={showModal && showModal.title}
+                onClose={() => onShowModal(null)}
+                buttons={showModal && showModal.buttons}>
+                {showModal && showModal.message}
+            </ResizableModal>
+        </Portal>
     </div>
 );
 

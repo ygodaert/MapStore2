@@ -20,7 +20,8 @@ const {
     createStyle,
     updateStyleCode,
     editStyleCode,
-    deleteStyle
+    deleteStyle,
+    setDefaultStyle
 } = require('../../actions/styleeditor');
 
 const { updateOptionsByOwner } = require('../../actions/additionallayers');
@@ -50,7 +51,8 @@ const {
     canEditStyleSelector,
     getAllStyles,
     styleServiceSelector,
-    getUpdatedLayer
+    getUpdatedLayer,
+    selectedStyleFormatSelector
 } = require('../../selectors/styleeditor');
 
 const { getEditorMode, STYLE_OWNER_NAME, getStyleTemplates } = require('../../utils/StyleEditorUtils');
@@ -117,14 +119,16 @@ const StyleTemplates = compose(
                 addStyleSelector,
                 geometryTypeSelector,
                 canEditStyleSelector,
-                styleServiceSelector
+                styleServiceSelector,
+                loadingStyleSelector
             ],
-            (selectedStyle, add, geometryType, canEdit, { formats = [] } = {}) => ({
+            (selectedStyle, add, geometryType, canEdit, { formats = [] } = {}, loading) => ({
                 selectedStyle,
                 add: add && selectedStyle,
                 geometryType,
                 canEdit,
-                availableFormats: formats
+                availableFormats: formats,
+                loading
             })
         ),
         {
@@ -167,7 +171,8 @@ const StyleList = compose(
                 position: 'relative'
             },
             maskStyle: {
-                overflowY: 'auto'
+                overflowY: 'auto',
+                left: 0
             }
         }
     )
@@ -186,16 +191,20 @@ const StyleToolbar = compose(
                 loadingStyleSelector,
                 selectedStyleSelector,
                 canEditStyleSelector,
-                getAllStyles
+                getAllStyles,
+                styleServiceSelector,
+                selectedStyleFormatSelector
             ],
-            (status, templateId, error, initialCode, code, loading, selectedStyle, canEdit, { defaultStyle }) => ({
+            (status, templateId, error, initialCode, code, loading, selectedStyle, canEdit, { defaultStyle }, { formats = [ 'sld' ] } = {}, format) => ({
                 status,
                 templateId,
                 error,
                 isCodeChanged: initialCode !== code,
                 loading,
                 selectedStyle: defaultStyle === selectedStyle ? '' : selectedStyle,
-                editEnabled: canEdit
+                editEnabled: canEdit,
+                // enable edit only if service support current format
+                disableCodeEditing: formats.indexOf(format) === -1
             })
         ),
         {
@@ -205,7 +214,8 @@ const StyleToolbar = compose(
             onReset: updateOptionsByOwner.bind(null, STYLE_OWNER_NAME, [{}]),
             onAdd: addStyle.bind(null, true),
             onUpdate: updateStyleCode,
-            onDelete: deleteStyle
+            onDelete: deleteStyle,
+            onSetDefault: setDefaultStyle
         }
     )
 )(require('../../components/styleeditor/StyleToolbar'));

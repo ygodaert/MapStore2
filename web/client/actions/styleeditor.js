@@ -21,6 +21,7 @@ const EDIT_STYLE_CODE = 'STYLEEDITOR:EDIT_STYLE_CODE';
 const DELETE_STYLE = 'STYLEEDITOR:DELETE_STYLE';
 const INIT_STYLE_SERVICE = 'STYLEEDITOR:INIT_STYLE_SERVICE';
 const SET_EDIT_PERMISSION = 'STYLEEDITOR:SET_EDIT_PERMISSION';
+const SET_DEFAULT_STYLE = 'STYLEEDITOR:SET_DEFAULT_STYLE';
 
 /**
 * Toggle style editor, it triggers an epic to initialize or stop the style editor
@@ -54,13 +55,14 @@ function updateStatus(status) {
 * @param {object} styleProps { code, templateId, format, init } init set initialCode
 * @return {object} of type `SELECT_STYLE_TEMPLATE` styleProps
 */
-function selectStyleTemplate({ code, templateId, format, init } = {}) {
+function selectStyleTemplate({ code, templateId, format, languageVersion, init } = {}) {
     return {
         type: SELECT_STYLE_TEMPLATE,
         code,
         templateId,
         format,
-        init
+        init,
+        languageVersion
     };
 }
 /**
@@ -69,14 +71,15 @@ function selectStyleTemplate({ code, templateId, format, init } = {}) {
 * @param {object} styleProps { temporaryId, templateId, code, format, init } init set initialCode
 * @return {object} of type `UPDATE_TEMPORARY_STYLE` styleProps
 */
-function updateTemporaryStyle({ temporaryId, templateId, code, format, init } = {}) {
+function updateTemporaryStyle({ temporaryId, templateId, code, format, languageVersion, init } = {}) {
     return {
         type: UPDATE_TEMPORARY_STYLE,
         temporaryId,
         templateId,
         code,
         format,
-        init
+        init,
+        languageVersion
     };
 }
 /**
@@ -204,6 +207,16 @@ function setEditPermissionStyleEditor(canEdit) {
         canEdit
     };
 }
+/**
+* Set default style of the current selected layer
+* @memberof actions.styleeditor
+* @return {object} of type `SET_DEFAULT_STYLE`
+*/
+function setDefaultStyle() {
+    return {
+        type: SET_DEFAULT_STYLE
+    };
+}
 
 /**
 * Actions for styleeditor
@@ -225,6 +238,7 @@ module.exports = {
     DELETE_STYLE,
     INIT_STYLE_SERVICE,
     SET_EDIT_PERMISSION,
+    SET_DEFAULT_STYLE,
     updateTemporaryStyle,
     updateStatus,
     toggleStyleEditor,
@@ -239,5 +253,6 @@ module.exports = {
     editStyleCode,
     deleteStyle,
     initStyleService,
-    setEditPermissionStyleEditor
+    setEditPermissionStyleEditor,
+    setDefaultStyle
 };
