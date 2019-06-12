@@ -10,7 +10,6 @@ const React = require('react');
 const assign = require('object-assign');
 var ol = require('openlayers');
 var CoordinatesUtils = require('../../../utils/CoordinatesUtils');
-var wgs84Sphere = new ol.Sphere(6378137);
 
 const MeasurementSupport = React.createClass({
     propTypes: {
@@ -111,7 +110,7 @@ const MeasurementSupport = React.createClass({
             this.props.map.on('pointermove', this.updateMeasurementResults, this);
         }
 
-        draw.on('drawstart', function(evt) {
+        draw.on('drawstart', (evt) => {
             // preserv the sketch feature of the draw controller
             // to update length/area on drawing a new vertex
             this.sketchFeature = evt.feature;
@@ -175,13 +174,13 @@ const MeasurementSupport = React.createClass({
         let reprojectedCoordinates = this.reprojectedCoordinates(coordinates);
         let length = 0;
         for (let i = 0; i < reprojectedCoordinates.length - 1; ++i) {
-            length += wgs84Sphere.haversineDistance(reprojectedCoordinates[i], reprojectedCoordinates[i + 1]);
+            length += ol.sphere.getDistance(reprojectedCoordinates[i], reprojectedCoordinates[i + 1]);
         }
         return length;
     },
     calculateGeodesicArea: function(coordinates) {
         let reprojectedCoordinates = this.reprojectedCoordinates(coordinates);
-        return Math.abs(wgs84Sphere.geodesicArea(reprojectedCoordinates));
+        return Math.abs(ol.sphere.getArea(new ol.geom.Polygon([reprojectedCoordinates]), {projection: 'EPSG:4326'}));
     }
 });
 

@@ -17,7 +17,34 @@ Layers.registerType('graticule', {
             color: 'rgba(255,120,0,0.9)',
             width: 2,
             lineDash: [0.5, 4]
-          })
+          }),
+          showLabels: true,
+          latLabelPosition: 0.02,
+          lonLabelPosition: 0.07,
+          lonLabelFormatter: function(lon) {
+            var str = "";
+            var l = Math.floor(lon * 100) / 100;
+            if (l === 0) {
+              str = l;
+            } else if (l > 0) {
+              str = l + " E";
+            } else {
+              str = Math.abs(l) + " W";
+            }
+            return str;
+          },
+          latLabelFormatter: function(lat) {
+            var str = "";
+            var l = Math.floor(lat * 100) / 100;
+            if (l === 0) {
+              str = l;
+            } else if (lat > 0) {
+              str = l + " N";
+            } else {
+              str = Math.abs(l) + " S";
+            }
+            return str;
+          }
         });
         graticule.setMap(map);
 
