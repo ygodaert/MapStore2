@@ -45,12 +45,13 @@ const getStyle = (options, callback = () => { }) => {
     if (!styles[`${options.url}:${styleName}`]) {
         const normalizedUrl = normalizeUrl(options.url);
         const parsedUrl = url.parse(normalizedUrl);
-
+        const path = parsedUrl.path.split('/')[1];
         const getOriginalStyle = (data) => {
             StyleAPI.getStyleCodeByName({
                 format: currenStyle.format,
-                baseUrl: `${parsedUrl.protocol}//${parsedUrl.host}/geoserver/`,
-                styleName
+                baseUrl: `${parsedUrl.protocol}//${parsedUrl.host}/${path}/`,
+                styleName,
+                token: options.params.authkey
             })
                 .then((original) => {
                     originalStyles[`${options.url}:${styleName}`] = original;
@@ -61,8 +62,9 @@ const getStyle = (options, callback = () => { }) => {
 
         StyleAPI.getStyleCodeByName({
             format: currenStyle.format === 'css' ? 'sld' : currenStyle.format,
-            baseUrl: `${parsedUrl.protocol}//${parsedUrl.host}/geoserver/`,
-            styleName
+            baseUrl: `${parsedUrl.protocol}//${parsedUrl.host}/${path}/`,
+            styleName,
+            token: options.params.authkey
         })
             .then((data) => {
                 styles[`${options.url}:${styleName}`] = data;

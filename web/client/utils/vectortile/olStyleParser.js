@@ -12,6 +12,12 @@ const {
     getRules: sldGetRules
 } = require('@nieuwlandgeo/sldreader/src/index');
 
+const SLDParser = require('geostyler-sld-parser').default;
+const OpenLayersParser = require('geostyler-openlayers-parser').default;
+
+const sldParser = new SLDParser();
+const olParser = new OpenLayersParser();
+
 let ICONS = {};
 
 const loadImages = (srcs, callback = () => { }) => {
@@ -55,7 +61,15 @@ module.exports = {
     },
     sld: ({ styleBody }, options, olLayer) => {
         if (!styleBody) return null;
-        const styledLayerDescriptor = sldReader(styleBody);
+        sldParser.readStyle(styleBody)
+            .then(parsedStyle =>
+                olParser
+                    .writeStyle(parsedStyle)
+                    .then(olStyle => olLayer.setStyle(olStyle))
+                    .catch(error => console.log(error))
+            )
+            .catch(error => console.log(error));
+        /*const styledLayerDescriptor = sldReader(styleBody);
 
         const layerNames = sldGetLayerNames(styledLayerDescriptor);
         const defaultLayerName = head(layerNames.filter(name => name.toLowerCase().indexOf('default') !== -1)) || layerNames.length === 1 && layerNames[0];
@@ -110,8 +124,8 @@ module.exports = {
                 return olFeaturedTypeStyles.reduce((plainOlStyles, { olStyles, zIndexes }, idx) => {
                     return [
                         ...plainOlStyles,
-                        ...olStyles.map((olStyle /*, jdx*/) => {
-                            const zIndex = (zIndexLayers[layerName] || 0) + Z_INDEX_STEP_FTS * idx; /* - zIndexes[jdx];*/
+                        ...olStyles.map((olStyle ) => {
+                            const zIndex = (zIndexLayers[layerName] || 0) + Z_INDEX_STEP_FTS * idx; /* - zIndexes[jdx];
                             olStyle.setZIndex(zIndex);
                             return olStyle;
                         })
@@ -120,6 +134,6 @@ module.exports = {
             };
 
             if (olLayer) olLayer.setStyle(styleFunction);
-        });
+        });*/
     }
 };

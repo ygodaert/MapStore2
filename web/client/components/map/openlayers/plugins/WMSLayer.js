@@ -98,7 +98,9 @@ function create(options, map) {
     if (vectorFormat && vectorFormat.name && ol.format[vectorFormat.name]) {
         vectorSource = new ol.source.VectorTile({
             ...sourceOptions,
-            format: new ol.format[vectorFormat.name](),
+            format: new ol.format[vectorFormat.name]({
+                layerName: '_layer_'
+            }),
             tileUrlFunction: (tileCoord, pixelRatio, projection) => wmsSource.tileUrlFunction(tileCoord, pixelRatio, projection)
         });
     }
