@@ -9,7 +9,7 @@ const axios = require('../../libs/ajax');
 
 var Api = {
     getLayer: function(geoserverBaseUrl, layerName, options) {
-        let url = geoserverBaseUrl + "layers/" + layerName + ".json";
+        let url = geoserverBaseUrl + "layers/" + layerName + ".json?authkey=" + options.params.authkey;
         return axios.get(url, options).then((response) => {return response.data && response.data.layer; });
     }
 };

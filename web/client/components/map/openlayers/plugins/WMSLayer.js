@@ -64,7 +64,8 @@ function create(options, map) {
     const urls = getWMSURLs(isArray(options.url) ? options.url : [options.url]);
     const queryParameters = wmsToOpenlayersOptions(options) || {};
     urls.forEach(url => SecurityUtils.addAuthenticationParameter(url, queryParameters));
-    if (options.singleTile) {
+    const vectorFormat = isVector(options);
+    if (options.singleTile && !vectorFormat) {
         return new ol.layer.Image({
             extent: map.getView().getProjection().getExtent(),
             opacity: options.opacity !== undefined ? options.opacity : 1,
@@ -94,7 +95,6 @@ function create(options, map) {
 
     const wmsSource = new ol.source.TileWMS({ ...sourceOptions });
     let vectorSource;
-    const vectorFormat = isVector(options);
     if (vectorFormat && vectorFormat.name && ol.format[vectorFormat.name]) {
         vectorSource = new ol.source.VectorTile({
             ...sourceOptions,
@@ -121,7 +121,7 @@ function create(options, map) {
 
 Layers.registerType('wms', {
     create,
-    update: (layer, newOptions, oldOptions) => {
+    update: (layer, newOptions, oldOptions, map) => {
         const newVectorFormat = isVector(newOptions);
         const oldVectorFormat = isVector(oldOptions);
         if (!isEqual(oldVectorFormat, newVectorFormat) || newVectorFormat) {
@@ -130,46 +130,64 @@ Layers.registerType('wms', {
                 || oldOptions.ratio !== newOptions.ratio
                 || !isEqual(oldVectorFormat, newVectorFormat)) {
                 return create(newOptions, map);
-            } else if (isEqual(oldVectorFormat, newVectorFormat)
+            }
+            if (isEqual(oldVectorFormat, newVectorFormat)
                 && (oldOptions.style !== newOptions.style
-                    || oldOptions._v_ !== newOptions._v_)) {
+                || oldOptions._v_ !== newOptions._v_)) {
                 applyStyle(newOptions, layer);
             }
-        } else if (oldOptions && layer && layer.getSource() && layer.getSource().updateParams) {
-            let changed = false;
-            if (oldOptions.params && newOptions.params) {
-                changed = Object.keys(oldOptions.params).reduce((found, param) => {
-                    if (newOptions.params[param] !== oldOptions.params[param]) {
+        }
+        if (layer) {
+            const vectorFormat = !!layer.get('wmsSource');
+            const source = layer.get('wmsSource') || layer.getSource();
+            if (oldOptions && source && source.updateParams) {
+                let changed = false;
+                if (oldOptions.params && newOptions.params) {
+                    changed = Object.keys(oldOptions.params).reduce((found, param) => {
+                        if (newOptions.params[param] !== oldOptions.params[param]) {
+                            return true;
+                        }
+                        return found;
+                    }, false);
+                } else if (!oldOptions.params && newOptions.params) {
+                    changed = true;
+                }
+                let oldParams = wmsToOpenlayersOptions(oldOptions);
+                let newParams = wmsToOpenlayersOptions(newOptions);
+                changed = changed || ["LAYERS", "STYLES", "FORMAT", "TRANSPARENT", "TILED", "VERSION"].reduce((found, param) => {
+                    if (oldParams[param] !== newParams[param]) {
                         return true;
                     }
                     return found;
                 }, false);
-            } else if (!oldOptions.params && newOptions.params) {
-                changed = true;
-            }
-            let oldParams = wmsToOpenlayersOptions(oldOptions);
-            let newParams = wmsToOpenlayersOptions(newOptions);
-            changed = changed || ["LAYERS", "STYLES", "FORMAT", "TRANSPARENT", "TILED", "VERSION" ].reduce((found, param) => {
-                if (oldParams[param] !== newParams[param]) {
-                    return true;
+                if (oldOptions.srs !== newOptions.srs) {
+                    const extent = ol.proj.get(CoordinatesUtils.normalizeSRS(newOptions.srs, newOptions.allowedSRS)).getExtent();
+                    if (newOptions.singleTile && !vectorFormat) {
+                        layer.setExtent(extent);
+                    } else {
+                        const tileGrid = new ol.tilegrid.TileGrid({
+                            extent: extent,
+                            resolutions: mapUtils.getResolutions(),
+                            tileSize: newOptions.tileSize ? newOptions.tileSize : 256,
+                            origin: newOptions.origin ? newOptions.origin : [extent[0], extent[1]]
+                        });
+                        source.tileGrid = tileGrid;
+                        if (vectorFormat) {
+                            layer.getSource().tileGrid = tileGrid;
+                        }
+                    }
+                    if (vectorFormat) {
+                        layer.getSource().clear();
+                        layer.getSource().refresh();
+                    }
                 }
-                return found;
-            }, false);
-            if (oldOptions.srs !== newOptions.srs) {
-                const extent = ol.proj.get(CoordinatesUtils.normalizeSRS(newOptions.srs, newOptions.allowedSRS)).getExtent();
-                if (newOptions.singleTile) {
-                    layer.setExtent(extent);
-                } else {
-                    layer.getSource().tileGrid = new ol.tilegrid.TileGrid({
-                        extent: extent,
-                        resolutions: mapUtils.getResolutions(),
-                        tileSize: newOptions.tileSize ? newOptions.tileSize : 256,
-                        origin: newOptions.origin ? newOptions.origin : [extent[0], extent[1]]
-                    });
+                if (changed) {
+                    source.updateParams(objectAssign(newParams, newOptions.params));
+                    if (vectorFormat) {
+                        layer.getSource().clear();
+                        layer.getSource().refresh();
+                    }
                 }
-            }
-            if (changed) {
-                layer.getSource().updateParams(objectAssign(newParams, newOptions.params));
             }
         }
     }

@@ -8,13 +8,11 @@
 
 const { head, trim, get } = require('lodash');
 const url = require('url');
+const axios = require('../libs/ajax');
 const StyleAPI = require('../api/geoserver/Styles');
+const LayersAPI = require('../api/geoserver/Layers');
 const { normalizeUrl } = require('./PrintUtils');
 const uuidv1 = require('uuid/v1');
-const {
-    Reader: sldReader,
-    getLayerNames: sldGetLayerNames
-} = require('@nieuwlandgeo/sldreader/src/index');
 
 const styles = {};
 const originalStyles = {};
@@ -35,45 +33,32 @@ const styleParser = {
 
 const isVector = ({ format }) => head(VECTOR_FORMAT.filter(vector => vector.formats.indexOf(format) !== -1));
 const getStyle = (options, callback = () => { }) => {
-    const availableStyles = options.availableStyles || [];
+    /*const availableStyles = options.availableStyles || [];
     const currenStyle = !options.style
         ? availableStyles[0]
         : head(availableStyles.filter(style => style.name === options.style));
     if (!currenStyle) return callback('');
-    const styleName = currenStyle.name;
+    const styleName = currenStyle.name;*/
 
-    if (!styles[`${options.url}:${styleName}`]) {
+    if (!styles[`${options.url}:${options.name}`]) {
         const normalizedUrl = normalizeUrl(options.url);
         const parsedUrl = url.parse(normalizedUrl);
         const path = parsedUrl.path.split('/')[1];
-        const getOriginalStyle = (data) => {
-            StyleAPI.getStyleCodeByName({
-                format: currenStyle.format,
-                baseUrl: `${parsedUrl.protocol}//${parsedUrl.host}/${path}/`,
-                styleName,
-                token: options.params.authkey
-            })
-                .then((original) => {
-                    originalStyles[`${options.url}:${styleName}`] = original;
-                    callback(data, original);
-                })
-                .catch(() => callback(data, ''));
-        };
 
-        StyleAPI.getStyleCodeByName({
-            format: currenStyle.format === 'css' ? 'sld' : currenStyle.format,
-            baseUrl: `${parsedUrl.protocol}//${parsedUrl.host}/${path}/`,
-            styleName,
-            token: options.params.authkey
-        })
-            .then((data) => {
-                styles[`${options.url}:${styleName}`] = data;
-                getOriginalStyle(data);
-            })
-            .catch(() => getOriginalStyle(''));
-
+        LayersAPI.getLayer(`${parsedUrl.protocol}//${parsedUrl.host}/${path}/rest/`, options.name, options).then((layer) => {
+            const styleUrl = layer.defaultStyle.href;
+            axios.get(styleUrl).then((response) => { 
+                const fileName = response.data.style.filename;
+                axios.get(styleUrl.substring(0, styleUrl.lastIndexOf('/')) + '/' + fileName + '?authkey=' + options.params.authkey)
+                    .then(resp => {
+                        const styleObj = { ...response.data.style, code: resp.data};
+                        styles[`${options.url}:${options.name}`] = styleObj;
+                        callback(styleObj);
+                    });
+            });
+        });
     } else {
-        callback(styles[`${options.url}:${styleName}`]);
+        callback(styles[`${options.url}:${options.name}`]);
     }
 
     return null;
