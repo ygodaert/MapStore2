@@ -207,6 +207,7 @@ class OpenlayersMap extends React.Component {
                             lng: tLng,
                             z: getElevation && getElevation(pos, event.pixel) || undefined
                         },
+                        rawPos: event.coordinate.slice(),
                         modifiers: {
                             alt: event.originalEvent.altKey,
                             ctrl: event.originalEvent.ctrlKey,
@@ -431,10 +432,10 @@ class OpenlayersMap extends React.Component {
                 onLayerError: this.props.onLayerError,
                 onLayerLoad: this.props.onLayerLoad,
                 projection: this.props.projection,
-                onCreationError: this.props.onCreationError
+                onCreationError: this.props.onCreationError,
+                mapOptions: this.props.mapOptions
             }) : null;
         }) : null;
-
         return (
             <div id={this.props.id} style={this.props.style}>
                 {children}

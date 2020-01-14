@@ -14,6 +14,7 @@ const {changeMousePosition} = require('../../actions/mousePosition');
 const {changeMeasurementState, changeGeometry, resetGeometry, updateMeasures} = require('../../actions/measurement');
 const {measurementSelector} = require('../../selectors/measurement');
 const {changeSelectionState} = require('../../actions/selection');
+const {mapPopupRemove} = require('../../actions/config');
 const {changeLocateState, onLocateError} = require('../../actions/locate');
 const {changeDrawingStatus, endDrawing, setCurrentStyle, geometryChanged, drawStopped, selectFeatures, drawingFeatures} = require('../../actions/draw');
 const {updateHighlighted} = require('../../actions/highlight');
@@ -93,6 +94,24 @@ module.exports = (mapType, actions) => {
     require('../../components/map/' + mapType + '/plugins/index');
     const LLayer = connect(null, {onWarning: warning})( components.Layer || Empty);
 
+    const getPopupContentComponent = ({ id, ...rest }) => {
+        switch (id) {
+        case 'identify':
+            return { id, ...rest, content: require('../Identify').IdentifyPlugin};
+        default:
+            return { id, ...rest };
+        }
+    };
+
+    const PopupSupport = connect(
+        (state) => {
+            const popups = (state.mapPopups || []).map(getPopupContentComponent);
+            return { popups };
+        }, {
+            onPopupClose: mapPopupRemove
+        }
+    )(components.PopupSupport || Empty);
+
     return {
         Map: LMap,
         Layer: LLayer,
@@ -104,7 +123,8 @@ module.exports = (mapType, actions) => {
             scalebar: components.ScaleBar || Empty,
             draw: DrawSupport,
             highlight: HighlightSupport,
-            selection: SelectionSupport
+            selection: SelectionSupport,
+            popup: PopupSupport
         }
     };
 };
