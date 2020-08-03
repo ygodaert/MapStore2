@@ -1,0 +1,121 @@
+.cadastrapp-mockup {
+
+    position: fixed;
+    background: #fff;
+    box-shadow: 0 0 8px 2px rgba(0,0,0,0.24);
+    // border: solid 1px #ccc;
+    overflow: hidden;
+    top: 0;
+    right: 0;
+    height: calc(~"100% - 40px");
+    width: 560px;
+    z-index: 999999999;
+
+    .top{
+        height: 52px;
+        width: 100%;
+        color: #ffffff;
+        background-color: #078aa3;
+        h4{
+            float: left;
+            width: 200px;
+            line-height: 32px;
+            margin-left: calc(~"50% - 100px");
+        }
+
+        .btn{
+            border: none !important;
+            border-top: none !important;
+        }
+
+        // .ms-close:hover{
+        // }
+        .glyphicon:hover{
+            transition: 0.3s;
+            transform: scale(1.2);
+            display: block;
+        }
+    }
+
+    .side-bar{
+        width: 52px;
+        margin-top: 52px;
+        height: 100%;
+        background: #eee;
+        // .btn{
+        //     line-height: 42px;
+        //     font-size: 21px;
+        // }
+    }
+    h3{
+        margin-top: 10px;
+        margin-left: 12px;
+    }
+
+    .tab-pane{
+        padding: 10px;
+    }
+
+    .table{
+        margin-bottom: 5px;
+    }
+
+    .right-side{
+        height: 100%;
+        width: calc(~"100% - 52px");
+    }
+
+    .btn-group{
+        float: right;
+        margin: 10px;
+    }
+
+    .owners-search, .coownership-search, .plots-search{
+        padding: 10px;
+        max-height: 35%;
+        height: 35%;
+    }
+
+    .plots-search{ height: 35%; }
+    .plots-selection{
+        padding: 10px;
+        height: calc(~"65% - 52px");
+        overflow: auto;
+    }
+
+    .tab-content{
+        border: solid 1px #ddd;
+        border-top: none;
+        overflow: hidden;
+    }
+}
+/* reconsider this */
+.item-row{
+    width: 100%;
+    float: left;
+    margin-bottom: 5px;
+}
+.label-col{
+    width: 40%;
+    float: left;
+}
+.form-col{
+    width: 60%;
+    float: left;
+}
+
+.cadastrapp-modal{
+    width: 720px;
+    max-width: none !important;
+
+    .tab-content{
+        border: solid 1px #ddd;
+        border-top: none;
+        overflow: hidden;
+    }
+}
+
+.cadastrapp-modal .modal-body{
+    overflow: hidden !important;
+}
+

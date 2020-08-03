@@ -280,7 +280,7 @@
             },
             "FeedbackMask"
         ],
-        "desktop": [ "Details",
+        "desktop": [ "Details", "CadastrappMockup",
           {
             "name": "Map",
             "cfg": {

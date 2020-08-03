@@ -124,7 +124,8 @@ module.exports = {
         WidgetsTrayPlugin: require('../plugins/WidgetsTray').default,
         ZoomAllPlugin: require('../plugins/ZoomAll'),
         ZoomInPlugin: require('../plugins/ZoomIn'),
-        ZoomOutPlugin: require('../plugins/ZoomOut')
+        ZoomOutPlugin: require('../plugins/ZoomOut'),
+        CadastrappMockupPlugin: require('../plugins/CadastrappMockup').default
     },
     requires: {
         ReactSwipe: require('react-swipeable-views').default,
