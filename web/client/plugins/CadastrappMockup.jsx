@@ -9,7 +9,8 @@
 import React, { useState } from 'react';
 import Select from 'react-select';
 import { Tabs, Tab, Table, ButtonGroup, Button, ControlLabel, FormControl,
-         Tooltip, OverlayTrigger } from "react-bootstrap";
+         Tooltip, OverlayTrigger, Row, Col, NavDropdown, MenuItem,
+         Nav, NavItem } from "react-bootstrap";
 
 import Modal from "../components/misc/Modal";
 import { createPlugin } from '../utils/PluginsUtils';
@@ -295,20 +296,6 @@ function RequestFormModal(props) {
 
 function PlotsSelectionTable(props) {
 
-    let data = [];
-
-    for (let i=0;i<4;i++) {
-        data.push(
-            [
-                randomString(2),
-                randomString(3),
-                randomString(9),
-                randomString(9),
-                randomString(5)
-            ]
-        )
-    }
-
     return (
         <Table condensed>
             <thead>
@@ -336,21 +323,76 @@ function PlotsSelectionTable(props) {
     )
 }
 
+function PlotSelectionTabs(props) {
+    return (
+        <Tabs
+            onSelect={props.onTabChange}
+            activeKey={props.active}
+            defaultActiveKey={props.active}>
+            {props.data.map((value, index)=>(
+                <Tab eventKey={index} title={"Selection " + (index+1).toString()}>
+                    <PlotsSelectionTable data={value}></PlotsSelectionTable>
+                </Tab>
+            ))}
+        </Tabs>
+    )
+}
+
+function PlotSelectionTabsWithDropdown(props) {
+    return (
+        <Tab.Container
+            onSelect={props.onTabChange}
+            activeKey={props.active}
+            defaultActiveKey={props.active}>
+            <Row className="clearfix">
+                <Col sm={12}>
+                    <Nav bsStyle="tabs">
+                        <NavItem eventKey={0}>
+                            Selection 1
+                        </NavItem>
+                        <NavItem eventKey={1}>
+                            Selection 2
+                        </NavItem>
+                        <NavDropdown title="Other Selections">
+                        {props.data.slice(2).map((value, index)=>(
+                            <MenuItem eventKey={index+2}>
+                                {"Selection " + (index+2+1).toString()}
+                            </MenuItem>
+                        ))}
+                        </NavDropdown>
+
+                    </Nav>
+                </Col>
+                <Col sm={12}>
+                    <Tab.Content animation>
+                    <Tab.Pane eventKey={0}>
+                        <PlotsSelectionTable data={props.data[0]}></PlotsSelectionTable>
+                    </Tab.Pane>
+                    <Tab.Pane eventKey={1}>
+                        <PlotsSelectionTable data={props.data[1]}></PlotsSelectionTable>
+                    </Tab.Pane>
+                        {props.data.slice(2).map((value, index)=>(
+                            <Tab.Pane eventKey={index+2}>
+                                <PlotsSelectionTable data={props.data[index+2]}></PlotsSelectionTable>
+                            </Tab.Pane>
+                        ))}
+                    </Tab.Content>
+                </Col>
+            </Row>
+        </Tab.Container>
+    )
+}
+
 function PlotsSelection(props) {
+
     let className = props.data.length == 0 ? "collapse" : "plots-selection";
-    // className = "plots-selection";
+    let TabComponent = props.data.length > 3 ? PlotSelectionTabsWithDropdown : PlotSelectionTabs;
+
     return (
         <div className={className}>
             <hr/>
             <h3>Plots Selection</h3>
-            <Tabs defaultActiveKey={1} id="uncontrolled-tab-example">
-                <Tab eventKey={1} title="Selection 1">
-                    <PlotsSelectionTable data={props.data}></PlotsSelectionTable>
-                </Tab>
-                <Tab eventKey={2} title="Selection 2">
-                    <PlotsSelectionTable data={[]}></PlotsSelectionTable>
-                </Tab>
-            </Tabs>
+            <TabComponent {...props}></TabComponent>
 
             <ButtonGroup>
                 <Button
@@ -566,6 +608,55 @@ function OwnersSearch(props) {
     )
 }
 
+
+function SampleTab() {
+
+
+    return (
+        <Tab.Container id="tabs-with-dropdown" defaultActiveKey="first">
+        <Row className="clearfix">
+        <Col sm={12}>
+            <Nav bsStyle="tabs">
+                <NavItem eventKey="first">
+                    Tab 1
+                </NavItem>
+                <NavItem eventKey="second">
+                    Tab 2
+                </NavItem>
+                <NavDropdown eventKey="3" title="Dropdown" id="nav-dropdown-within-tab">
+                    <MenuItem eventKey="3.1">Action</MenuItem>
+                    <MenuItem eventKey="3.2">Another action</MenuItem>
+                    <MenuItem eventKey="3.3">Something else here</MenuItem>
+                </NavDropdown>
+            </Nav>
+        </Col>
+        <Col sm={12}>
+            <Tab.Content animation>
+            <Tab.Pane eventKey="first">
+                Tab 1 content
+            </Tab.Pane>
+            <Tab.Pane eventKey="second">
+                Tab 2 content
+            </Tab.Pane>
+            <Tab.Pane eventKey="3.1">
+                Tab 3.1 content
+            </Tab.Pane>
+            <Tab.Pane eventKey="3.2">
+                Tab 3.2 content
+            </Tab.Pane>
+            <Tab.Pane eventKey="3.3">
+                Tab 3.3 content
+            </Tab.Pane>
+            <Tab.Pane eventKey="3.4">
+                Tab 3.4 content
+            </Tab.Pane>
+            </Tab.Content>
+        </Col>
+        </Row>
+    </Tab.Container>
+    )
+}
+
 function CadastrappMockup() {
 
     let [isShown , setIsShown] = useState(true);
@@ -577,7 +668,10 @@ function CadastrappMockup() {
     let [isCoownershipSearchShown , setIsCoownershipSearchShown] = useState(false);
     let [isPlotSelectionShown , setIsPlotSelectionShown] = useState(false);
 
-    let [plotSelectionData, setPlotSelectionData] = useState([]);
+    let [activeSelectionTab, setActiveSelectionTab] = useState(0);
+    let [plotSelectionData, setPlotSelectionData] = useState([[randomPlot(),randomPlot()]]);
+
+
 
 
     const handlePlotsZoom = () => {
@@ -607,9 +701,10 @@ function CadastrappMockup() {
     const handlePlotsSearch = (searchParameters) => {
         alert("Plot search is executed, random data is appended to plots selection");
         let selectionData = plotSelectionData.slice();
-        selectionData.push(randomPlot());
+        selectionData.push([randomPlot()]);
         setPlotSelectionData(selectionData);
-        // console.log(searchParameters);
+        setActiveSelectionTab(selectionData.length - 1);
+        console.log(selectionData.length - 1);
     }
 
     const handleOwnersSearch = (searchParameters) => {
@@ -634,22 +729,22 @@ function CadastrappMockup() {
 
         case "select-by-point":
             alert("You selected a plot by a point tool. Adding (1) random to plot data to 'Plots Selection' section");
-            selectionData.push(randomPlot());
+            selectionData[activeSelectionTab].push(randomPlot());
             setPlotSelectionData(selectionData);
         break;
 
         case "select-by-linestring":
             alert("You selected a plot by a linestring tool. Adding (2) random to plot data to 'Plots Selection' section");
-            selectionData.push(randomPlot());
-            selectionData.push(randomPlot());
+            selectionData[activeSelectionTab].push(randomPlot());
+            selectionData[activeSelectionTab].push(randomPlot());
             setPlotSelectionData(selectionData);
         break;
 
         case "select-by-polygon":
             alert("You selected a plot by a polygon tool. Adding (3) random to plot data to 'Plots Selection' section");
-            selectionData.push(randomPlot());
-            selectionData.push(randomPlot());
-            selectionData.push(randomPlot());
+            selectionData[activeSelectionTab].push(randomPlot());
+            selectionData[activeSelectionTab].push(randomPlot());
+            selectionData[activeSelectionTab].push(randomPlot());
             setPlotSelectionData(selectionData);
         break;
 
@@ -715,6 +810,12 @@ function CadastrappMockup() {
         }
     }
 
+    const handlePlotsSelectionTabChange = (tabIndex)=>
+    {
+        console.log("tab index" + tabIndex);
+        setActiveSelectionTab(tabIndex);
+    }
+
     const handlePluginClose = () => {
         setIsShown(false);
     }
@@ -751,7 +852,9 @@ function CadastrappMockup() {
                     onZoom={handlePlotsZoom}
                     onClear={handlePlotsClear}
                     onClick={handlePlotsSelectionClick}
+                    onTabChange={handlePlotsSelectionTabChange}
                     data={plotSelectionData}
+                    active={activeSelectionTab}
                 ></PlotsSelection>
                 <RequestFormModal
                     isShown={isRequestFormShown}
