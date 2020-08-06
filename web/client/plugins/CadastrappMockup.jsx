@@ -339,6 +339,10 @@ function PlotSelectionTabs(props) {
 }
 
 function PlotSelectionTabsWithDropdown(props) {
+    let otherSelectionIndex = props.active + 1;
+    if (otherSelectionIndex < 3)
+        otherSelectionIndex = "3+ ";
+
     return (
         <Tab.Container
             onSelect={props.onTabChange}
@@ -353,7 +357,7 @@ function PlotSelectionTabsWithDropdown(props) {
                         <NavItem eventKey={1}>
                             Selection 2
                         </NavItem>
-                        <NavDropdown title="Other Selections">
+                        <NavDropdown title={"Selection " + otherSelectionIndex}>
                         {props.data.slice(2).map((value, index)=>(
                             <MenuItem eventKey={index+2}>
                                 {"Selection " + (index+2+1).toString()}
@@ -668,10 +672,9 @@ function CadastrappMockup() {
     let [isCoownershipSearchShown , setIsCoownershipSearchShown] = useState(false);
     let [isPlotSelectionShown , setIsPlotSelectionShown] = useState(false);
 
+    let [activeToolbar, setActiveToolbar] = useState("");
     let [activeSelectionTab, setActiveSelectionTab] = useState(0);
-    let [plotSelectionData, setPlotSelectionData] = useState([[randomPlot(),randomPlot()]]);
-
-
+    let [plotSelectionData, setPlotSelectionData] = useState([]);
 
 
     const handlePlotsZoom = () => {
@@ -729,11 +732,16 @@ function CadastrappMockup() {
 
         case "select-by-point":
             alert("You selected a plot by a point tool. Adding (1) random to plot data to 'Plots Selection' section");
+            if (selectionData.length == 0)
+                selectionData = [[]];
             selectionData[activeSelectionTab].push(randomPlot());
             setPlotSelectionData(selectionData);
         break;
 
         case "select-by-linestring":
+            if (selectionData.length == 0)
+                selectionData = [[]];
+
             alert("You selected a plot by a linestring tool. Adding (2) random to plot data to 'Plots Selection' section");
             selectionData[activeSelectionTab].push(randomPlot());
             selectionData[activeSelectionTab].push(randomPlot());
@@ -741,6 +749,9 @@ function CadastrappMockup() {
         break;
 
         case "select-by-polygon":
+            if (selectionData.length == 0)
+                selectionData = [[]];
+
             alert("You selected a plot by a polygon tool. Adding (3) random to plot data to 'Plots Selection' section");
             selectionData[activeSelectionTab].push(randomPlot());
             selectionData[activeSelectionTab].push(randomPlot());
@@ -806,7 +817,6 @@ function CadastrappMockup() {
             let url = "https://portail.sig.rennesmetropole.fr/mapfishapp/ws/addons/cadastrapp/html/ficheUniteFonciere.html";
             window.open(url, '_blank');
         break;
-
         }
     }
 
@@ -823,7 +833,10 @@ function CadastrappMockup() {
     let className = isShown ? "cadastrapp-mockup" : "collapse";
     return (
         <div className={className}>
-            <MainToolbar onClick={handleToolbarClick}></MainToolbar>
+            <MainToolbar
+                onClick={handleToolbarClick}
+                selected={activeToolbar}
+            ></MainToolbar>
             <div className="top">
                 <h4>Cadastrapp</h4>
                 <Button
