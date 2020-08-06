@@ -72,7 +72,7 @@ function MainToolbar(props) {
                     <Button
                         onClick={clickHandler(v[1])}
                         bsStyle="primary"
-                        className="square-button">
+                        className={props.selected == v[1] ? "square-button btn-selected" : "square-button"}>
                             <span className={"glyphicon glyphicon-" + v[0]}></span>
                     </Button>
                 </OverlayTrigger>
@@ -766,28 +766,33 @@ function CadastrappMockup() {
         break;
 
         case "search-plots":
+            setActiveToolbar("search-plots");
             setIsPlotsSearchShown(true);
             setIsOwnersSearchShown(false);
             setIsCoownershipSearchShown(false);
         break;
 
         case "search-owners":
+            setActiveToolbar("search-owners");
             setIsOwnersSearchShown(true);
             setIsPlotsSearchShown(false);
             setIsCoownershipSearchShown(false);
         break;
 
         case "coownership":
+            setActiveToolbar("coownership");
             setIsCoownershipSearchShown(true);
             setIsPlotsSearchShown(false);
             setIsOwnersSearchShown(false);
         break;
 
         case "request-form":
+            // setActiveToolbar("");
             setIsRequestFormShown(true);
         break;
 
         case "preferences":
+            // setActiveToolbar("");
             setIsPreferencesModalShown(true);
         break;
 
