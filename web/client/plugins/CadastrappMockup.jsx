@@ -10,10 +10,11 @@ import React, { useState } from 'react';
 import Select from 'react-select';
 import { Tabs, Tab, Table, ButtonGroup, Button, ControlLabel, FormControl,
          Tooltip, OverlayTrigger, Row, Col, NavDropdown, MenuItem,
-         Nav, NavItem } from "react-bootstrap";
+         Nav, NavItem, Glyphicon } from "react-bootstrap";
 
 import Modal from "../components/misc/Modal";
 import { createPlugin } from '../utils/PluginsUtils';
+import { toggleControl } from '../actions/controls';
 
 function randomString(length) {
     let s = "";
@@ -43,6 +44,7 @@ function MainToolbar(props) {
     // 1: action name
     // 2: tooltip text
     let toolbarOptions = [
+        ["resize-full", "zoom", "Zoom to whole selection"],
         ["map-marker", "select-by-point", "Select / Activate / Unselect one plot with a simple click "],
         ["polyline", "select-by-linestring", "Select / Activate / Unselect plots which intersects a line"],
         ["polygon", "select-by-polygon", "Select / Activate / Unselect plots which intersects a polygon"],
@@ -323,18 +325,58 @@ function PlotsSelectionTable(props) {
     )
 }
 
+function PlotSelectionTabContent(props) {
+    return (
+        <Col sm={12}>
+            <Tab.Content animation>
+                {props.data.map((value, index)=>(
+                    <Tab.Pane eventKey={index}>
+                        <PlotsSelectionTable data={props.data[index]}></PlotsSelectionTable>
+                    </Tab.Pane>
+                ))}
+            </Tab.Content>
+        </Col>
+    )
+}
+
+function PlotSelectionTabActionButtons(props) {
+    return (
+        <ButtonGroup className="pull-right">
+            <Button
+                className="pull-right"
+                onClick={props.onNewTab}
+            ><span className="glyphicon glyphicon-plus"></span>
+            </Button>
+            <Button
+                className="pull-right"
+                onClick={props.onNewTab}>
+                <Glyphicon glyph="trash"/>
+            </Button>
+        </ButtonGroup>
+    )
+}
+
 function PlotSelectionTabs(props) {
     return (
-        <Tabs
+        <Tab.Container
             onSelect={props.onTabChange}
             activeKey={props.active}
             defaultActiveKey={props.active}>
-            {props.data.map((value, index)=>(
-                <Tab eventKey={index} title={"Selection " + (index+1).toString()}>
-                    <PlotsSelectionTable data={value}></PlotsSelectionTable>
-                </Tab>
-            ))}
-        </Tabs>
+            <Row className="clearfix">
+                <Col sm={12}>
+                    <Nav bsStyle="tabs">
+                        {props.data.map((value, index)=>(
+                            <NavItem eventKey={index}>
+                                {"Selection " + (index+1).toString()}
+                            </NavItem>
+                        ))}
+                        <PlotSelectionTabActionButtons {...props}>
+                        </PlotSelectionTabActionButtons>
+                    </Nav>
+                </Col>
+                <PlotSelectionTabContent {...props}></PlotSelectionTabContent>
+            </Row>
+        </Tab.Container>
     )
 }
 
@@ -364,24 +406,11 @@ function PlotSelectionTabsWithDropdown(props) {
                             </MenuItem>
                         ))}
                         </NavDropdown>
-
+                        <PlotSelectionTabActionButtons {...props}>
+                        </PlotSelectionTabActionButtons>
                     </Nav>
                 </Col>
-                <Col sm={12}>
-                    <Tab.Content animation>
-                    <Tab.Pane eventKey={0}>
-                        <PlotsSelectionTable data={props.data[0]}></PlotsSelectionTable>
-                    </Tab.Pane>
-                    <Tab.Pane eventKey={1}>
-                        <PlotsSelectionTable data={props.data[1]}></PlotsSelectionTable>
-                    </Tab.Pane>
-                        {props.data.slice(2).map((value, index)=>(
-                            <Tab.Pane eventKey={index+2}>
-                                <PlotsSelectionTable data={props.data[index+2]}></PlotsSelectionTable>
-                            </Tab.Pane>
-                        ))}
-                    </Tab.Content>
-                </Col>
+                <PlotSelectionTabContent {...props}></PlotSelectionTabContent>
             </Row>
         </Tab.Container>
     )
@@ -613,57 +642,10 @@ function OwnersSearch(props) {
 }
 
 
-function SampleTab() {
-
-
-    return (
-        <Tab.Container id="tabs-with-dropdown" defaultActiveKey="first">
-        <Row className="clearfix">
-        <Col sm={12}>
-            <Nav bsStyle="tabs">
-                <NavItem eventKey="first">
-                    Tab 1
-                </NavItem>
-                <NavItem eventKey="second">
-                    Tab 2
-                </NavItem>
-                <NavDropdown eventKey="3" title="Dropdown" id="nav-dropdown-within-tab">
-                    <MenuItem eventKey="3.1">Action</MenuItem>
-                    <MenuItem eventKey="3.2">Another action</MenuItem>
-                    <MenuItem eventKey="3.3">Something else here</MenuItem>
-                </NavDropdown>
-            </Nav>
-        </Col>
-        <Col sm={12}>
-            <Tab.Content animation>
-            <Tab.Pane eventKey="first">
-                Tab 1 content
-            </Tab.Pane>
-            <Tab.Pane eventKey="second">
-                Tab 2 content
-            </Tab.Pane>
-            <Tab.Pane eventKey="3.1">
-                Tab 3.1 content
-            </Tab.Pane>
-            <Tab.Pane eventKey="3.2">
-                Tab 3.2 content
-            </Tab.Pane>
-            <Tab.Pane eventKey="3.3">
-                Tab 3.3 content
-            </Tab.Pane>
-            <Tab.Pane eventKey="3.4">
-                Tab 3.4 content
-            </Tab.Pane>
-            </Tab.Content>
-        </Col>
-        </Row>
-    </Tab.Container>
-    )
-}
 
 function CadastrappMockup() {
 
-    let [isShown , setIsShown] = useState(true);
+    let [isShown , setIsShown] = useState(false);
     let [isRequestFormShown , setIsRequestFormShown] = useState(false);
     let [isInformationFormShown , setIsInformationFormShown] = useState(false);
     let [isPreferencesModalShown , setIsPreferencesModalShown] = useState(false);
@@ -675,6 +657,15 @@ function CadastrappMockup() {
     let [activeToolbar, setActiveToolbar] = useState("");
     let [activeSelectionTab, setActiveSelectionTab] = useState(0);
     let [plotSelectionData, setPlotSelectionData] = useState([]);
+
+
+    // fix this
+    let f = ()=> {
+        setIsShown(true);
+    }
+
+
+    document.addEventListener("open-cadastrapp", f)
 
 
     const handlePlotsZoom = () => {
@@ -825,6 +816,14 @@ function CadastrappMockup() {
         }
     }
 
+    const handlePlotsSelectionNewTab = () =>
+    {
+        let selectionData = plotSelectionData.slice();
+        selectionData.push([[]]);
+        setPlotSelectionData(selectionData);
+        setActiveSelectionTab(selectionData.length - 1);
+    }
+
     const handlePlotsSelectionTabChange = (tabIndex)=>
     {
         console.log("tab index" + tabIndex);
@@ -871,6 +870,7 @@ function CadastrappMockup() {
                     onClear={handlePlotsClear}
                     onClick={handlePlotsSelectionClick}
                     onTabChange={handlePlotsSelectionTabChange}
+                    onNewTab={handlePlotsSelectionNewTab}
                     data={plotSelectionData}
                     active={activeSelectionTab}
                 ></PlotsSelection>
@@ -892,5 +892,22 @@ function CadastrappMockup() {
 }
 
 export default createPlugin('CadastrappMockup', {
-    component: CadastrappMockup
+    component: CadastrappMockup,
+    containers: {
+        BurgerMenu:{
+            name: 'cadastrapp',
+            position: 1050,
+            text: "CADASTRAPP",
+            icon: <Glyphicon glyph="th"/>,
+            action: () => {
+                // fix this later
+                document.dispatchEvent(new Event("open-cadastrapp"));
+                return toggleControl('cadastrapp', 'enabled');
+            },
+            selector: (state, ownProps) => {
+            },
+            priority: 2,
+            doNotHide: true
+        }
+    }
 });
