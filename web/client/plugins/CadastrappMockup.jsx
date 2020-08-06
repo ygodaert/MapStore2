@@ -349,7 +349,7 @@ function PlotSelectionTabActionButtons(props) {
             </Button>
             <Button
                 className="pull-right"
-                onClick={props.onNewTab}>
+                onClick={props.onTabDelete}>
                 <Glyphicon glyph="trash"/>
             </Button>
         </ButtonGroup>
@@ -816,17 +816,21 @@ function CadastrappMockup() {
         }
     }
 
-    const handlePlotsSelectionNewTab = () =>
-    {
+    const handlePlotsSelectionDeleteTab = (index) => {
+        let selectionData = plotSelectionData.slice();
+        selectionData.splice(index, 1);
+        setPlotSelectionData(selectionData);
+        setActiveSelectionTab(selectionData.length - 1);
+    }
+
+    const handlePlotsSelectionNewTab = () => {
         let selectionData = plotSelectionData.slice();
         selectionData.push([[]]);
         setPlotSelectionData(selectionData);
         setActiveSelectionTab(selectionData.length - 1);
     }
 
-    const handlePlotsSelectionTabChange = (tabIndex)=>
-    {
-        console.log("tab index" + tabIndex);
+    const handlePlotsSelectionTabChange = (tabIndex)=> {
         setActiveSelectionTab(tabIndex);
     }
 
@@ -869,6 +873,7 @@ function CadastrappMockup() {
                     onZoom={handlePlotsZoom}
                     onClear={handlePlotsClear}
                     onClick={handlePlotsSelectionClick}
+                    onTabDelete={handlePlotsSelectionDeleteTab}
                     onTabChange={handlePlotsSelectionTabChange}
                     onNewTab={handlePlotsSelectionNewTab}
                     data={plotSelectionData}
