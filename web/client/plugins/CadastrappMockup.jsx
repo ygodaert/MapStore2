@@ -174,7 +174,6 @@ function InformationFormModal(props) {
                     </Tab>
                     <Tab eventKey={3} title="Co-Owners">
                         <Button>Properties List</Button>
-                        <Button>Properties List</Button>
                         <Table condensed>
                             <thead>
                                 <tr>
@@ -381,8 +380,8 @@ function PlotsSelectionTable(props) {
                 <tr>
                     <th>Town</th>
                     <th>Section</th>
-                    <th>Plan Number</th>
                     <th>Cadastral Address</th>
+                    <th>Plan Number</th>
                     <th>Surface DGFIP in m2</th>
                 </tr>
             </thead>
@@ -419,24 +418,31 @@ function PlotSelectionTabContent(props) {
 function PlotSelectionTabActionButtons(props) {
     return (
         <ButtonGroup className="pull-right">
-            <Button
-                className="pull-right"
-                onClick={props.onNewTab}
-            ><span className="glyphicon glyphicon-plus"></span>
-            </Button>
-            <Button
-                className="pull-right"
-                onClick={props.onTabDelete}>
-                <Glyphicon glyph="trash"/>
-            </Button>
+            <OverlayTrigger placement="bottom" overlay={<Tooltip>{"Add a new Selection Tab"}</Tooltip>}>
+                <Button
+                    className="pull-right"
+                    onClick={props.onNewTab}
+                ><span className="glyphicon glyphicon-plus"></span>
+                </Button>
+            </OverlayTrigger>
+            <OverlayTrigger placement="bottom" overlay={<Tooltip>{"Delete current Selection Tab"}</Tooltip>}>
+                <Button
+                    className="pull-right"
+                    onClick={props.onTabDelete}>
+                    <Glyphicon glyph="trash"/>
+                </Button>
+            </OverlayTrigger>
         </ButtonGroup>
     )
 }
 
 function WelcomeMessage(props) {
+    let className = props.isShown ? "collapse" : "welcome-message";
     return (
-    <>
-    </>
+    <div className={className}>
+        <h3>Cadastrapp</h3>
+        <h4>Select desired tool in the left side toolbar to start</h4>
+    </div>
     )
 }
 
@@ -500,6 +506,41 @@ function PlotSelectionTabsWithDropdown(props) {
     )
 }
 
+function PlotSelectionTopActionButtons(props) {
+
+    return (
+    <ButtonGroup className="pull-right">
+        <OverlayTrigger placement="bottom" overlay={<Tooltip>{"Zoom"}</Tooltip>}>
+            <Button
+                onClick={()=>{ props.onClick("zoom") }}
+            >
+                <Glyphicon glyph="zoom-in"/>
+            </Button>
+        </OverlayTrigger>
+        <OverlayTrigger placement="bottom" overlay={<Tooltip>{"Landry Information"}</Tooltip>}>
+            <Button
+                onClick={()=>{ props.onClick("landry") }}
+            >
+                <Glyphicon glyph="th-list"/>
+            </Button>
+        </OverlayTrigger>
+        <OverlayTrigger placement="bottom" overlay={<Tooltip>{"Information Form"}</Tooltip>}>
+            <Button
+                onClick={()=>{ props.onClick("information-form") }}
+            ><Glyphicon glyph="info-sign"/></Button>
+        </OverlayTrigger>
+        <OverlayTrigger placement="bottom" overlay={<Tooltip>{"Export"}</Tooltip>}>
+            <DropdownButton pullRight title={<Glyphicon glyph="export"/>}>
+                <MenuItem>Plot</MenuItem>
+                <MenuItem>Owners</MenuItem>
+                <MenuItem>Co-owners</MenuItem>
+                <MenuItem>Bundle</MenuItem>
+            </DropdownButton>
+        </OverlayTrigger>
+    </ButtonGroup>
+    )
+}
+
 function PlotsSelection(props) {
 
     let className = props.data.length == 0 ? "collapse" : "plots-selection";
@@ -508,26 +549,10 @@ function PlotsSelection(props) {
     return (
         <div className={className}>
             <hr/>
-            <h3>Plots Selection</h3>
+            <h3 className="pull-left">Plots Selection</h3>
+            <PlotSelectionTopActionButtons {...props}>
+            </PlotSelectionTopActionButtons>
             <TabComponent {...props}></TabComponent>
-
-            <ButtonGroup>
-                <Button
-                    onClick={()=>{ props.onClick("zoom") }}
-                >Zoom</Button>
-                <Button
-                    onClick={()=>{ props.onClick("landry") }}
-                >Landry Property</Button>
-                <Button
-                    onClick={()=>{ props.onClick("information-form") }}
-                >Information Form</Button>
-                <Button
-                    onClick={()=>{ props.onClick("export") }}
-                >Export</Button>
-                <Button
-                    onClick={props.onClear}
-                >Close</Button>
-            </ButtonGroup>
         </div>
     )
 }
@@ -803,13 +828,10 @@ function RequestObjectPlot(props) {
 
 }
 
-
-
-
-
 function CadastrappMockup() {
 
     let [isShown , setIsShown] = useState(false);
+    let [isWelcomeShown , seIsWelcomeShown] = useState(true);
     let [isRequestFormShown , setIsRequestFormShown] = useState(false);
     let [isInformationFormShown , setIsInformationFormShown] = useState(false);
     let [isPreferencesModalShown , setIsPreferencesModalShown] = useState(false);
@@ -828,7 +850,7 @@ function CadastrappMockup() {
         setIsShown(true);
     }
 
-
+    // remove this
     document.addEventListener("open-cadastrapp", f)
 
 
@@ -1022,7 +1044,9 @@ function CadastrappMockup() {
                 </Button>
             </div>
             <div className="right-side pull-left">
-                <WelcomeMessage></WelcomeMessage>
+                <WelcomeMessage
+                    isShown={isWelcomeShown}
+                ></WelcomeMessage>
                 <PlotsSearch
                     isShown={isPlotsSearchShown}
                     onSearch={handlePlotsSearch}
@@ -1077,8 +1101,7 @@ export default createPlugin('CadastrappMockup', {
                 document.dispatchEvent(new Event("open-cadastrapp"));
                 return toggleControl('cadastrapp', 'enabled');
             },
-            selector: (state, ownProps) => {
-            },
+            selector: (state, ownProps) => {},
             priority: 2,
             doNotHide: true
         }
