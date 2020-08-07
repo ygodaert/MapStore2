@@ -10,11 +10,13 @@ import React, { useState } from 'react';
 import Select from 'react-select';
 import { Tabs, Tab, Table, ButtonGroup, Button, ControlLabel, FormControl,
          Tooltip, OverlayTrigger, Row, Col, NavDropdown, MenuItem,
+         DropdownButton, Dropdown,
          Nav, NavItem, Glyphicon } from "react-bootstrap";
 
 import Modal from "../components/misc/Modal";
 import { createPlugin } from '../utils/PluginsUtils';
 import { toggleControl } from '../actions/controls';
+import ColorPicker from '../components/style/ColorPicker';
 
 function randomString(length) {
     let s = "";
@@ -100,6 +102,7 @@ function InformationFormModal(props) {
             <Modal.Body>
                 <Tabs defaultActiveKey={1} id="uncontrolled-tab-example">
                     <Tab eventKey={1} title="Plot">
+                    <Button>Plot Information</Button>
                     <Table condensed>
                         <thead>
                             <tr>
@@ -109,42 +112,102 @@ function InformationFormModal(props) {
                         </thead>
                         <tbody>
                             <tr>
-                                <td>Town</td><td>1</td>
+                                <td>Town</td><td>Rennes(359329)</td>
                             </tr>
                             <tr>
-                                <td>Section</td><td>2</td>
+                                <td>Section</td><td>AP</td>
                             </tr>
                             <tr>
-                                <td>Plot</td><td>3</td>
+                                <td>Plot</td><td>851</td>
                             </tr>
                             <tr>
-                                <td>Voie</td><td>4</td>
+                                <td>Voie</td><td>5162</td>
                             </tr>
                             <tr>
-                                <td>Address</td><td>5</td>
+                                <td>Address</td><td>RUEJULIEN OFFRAY D LA METTRIE</td>
                             </tr>
                             <tr>
-                                <td>Size DGFIP in m2</td><td>6</td>
+                                <td>Size DGFIP in m2</td><td>277</td>
                             </tr>
                             <tr>
-                                <td>Size in m2</td><td>7</td>
+                                <td>Size in m2</td><td>288</td>
                             </tr>
                             <tr>
-                                <td>Plot with building</td><td>8</td>
+                                <td>Plot with building</td><td>no</td>
                             </tr>
                             <tr>
-                                <td>Plot with building</td><td>9</td>
+                                <td>Plot with building</td><td>no</td>
                             </tr>
 
                         </tbody>
                     </Table>
                     </Tab>
                     <Tab eventKey={2} title="Owners">
+                        <Button>Properties List</Button>
+                        <Table condensed>
+                            <thead>
+                                <tr>
+                                    <th>Identifier</th>
+                                    <th>Identifier</th>
+                                    <th>Last Name</th>
+                                    <th>Address</th>
+                                    <th>Date of birth</th>
+                                    <th>Birth Location</th>
+                                    <th>Right Code</th>
+                                    <th>legal form</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th>P</th>
+                                    <th>350231+13232</th>
+                                    <th>COMMUNE DE RENNES</th>
+                                    <th>SERVICES IMMOBIL CS63123 PLE DE LA MAIRIE</th>
+                                    <th></th>
+                                    <th></th>
+                                    <th>PROPRIETAIRE</th>
+                                    <th>COM</th>
+                                </tr>
+                            </tbody>
+                        </Table>
 
                     </Tab>
                     <Tab eventKey={3} title="Co-Owners">
+                        <Button>Properties List</Button>
+                        <Button>Properties List</Button>
+                        <Table condensed>
+                            <thead>
+                                <tr>
+                                    <th>Identifier</th>
+                                    <th>Identifier</th>
+                                    <th>Last Name</th>
+                                    <th>Address</th>
+                                    <th>Date of birth</th>
+                                    <th>Birth Location</th>
+                                    <th>Right Code</th>
+                                    <th>legal form</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th>P</th>
+                                    <th>350231+13232</th>
+                                    <th>COMMUNE DE RENNES</th>
+                                    <th>SERVICES IMMOBIL CS63123 PLE DE LA MAIRIE</th>
+                                    <th></th>
+                                    <th></th>
+                                    <th>PROPRIETAIRE</th>
+                                    <th>COM</th>
+                                </tr>
+                            </tbody>
+                        </Table>
                     </Tab>
-                    <Tab eventKey={4} title="Building(s)"></Tab>
+                    <Tab eventKey={4} title="Building(s)">
+                        <Button>Properties List</Button>
+                        <Button>Description</Button>
+                        <Button>Bundle</Button>
+
+                    </Tab>
                     <Tab eventKey={5} title="Subdivisions Fiscales"></Tab>
                     <Tab eventKey={6} title="Mutation History"></Tab>
                 </Tabs>
@@ -167,7 +230,11 @@ function PreferencesModal(props) {
                         <ControlLabel>Highlight Color</ControlLabel>
                     </div>
                     <div className="form-col">
-                        <Select></Select>
+                        <ColorPicker
+                                value={"#ffa"}
+                                line={false}
+                                text={"Highlight Color"}
+                        />
                     </div>
                 </div>
                 <div className="item-row">
@@ -191,11 +258,16 @@ function PreferencesModal(props) {
                         <ControlLabel>Stroke Color</ControlLabel>
                     </div>
                     <div className="form-col">
-                        <Select></Select>
+                        <ColorPicker
+                                value={"#faa"}
+                                line={false}
+                                text={"Stroke Color"}
+                        />
                     </div>
                 </div>
             </Modal.Body>
             <Modal.Footer>
+                <Button>Set default style</Button>
                 <Button>Save</Button>
             </Modal.Footer>
         </Modal>
@@ -276,6 +348,7 @@ function RequestFormModal(props) {
                 <div className="item-row">
                     <div className="label-col">
                         <ControlLabel>Town, Municipality</ControlLabel>
+                        <div class="text-muted">ex. Rennes, Lannion</div>
                     </div>
                     <div className="form-col">
                         <FormControl type="text" bsSize="sm"></FormControl>
@@ -357,6 +430,13 @@ function PlotSelectionTabActionButtons(props) {
                 <Glyphicon glyph="trash"/>
             </Button>
         </ButtonGroup>
+    )
+}
+
+function WelcomeMessage(props) {
+    return (
+    <>
+    </>
     )
 }
 
@@ -942,6 +1022,7 @@ function CadastrappMockup() {
                 </Button>
             </div>
             <div className="right-side pull-left">
+                <WelcomeMessage></WelcomeMessage>
                 <PlotsSearch
                     isShown={isPlotsSearchShown}
                     onSearch={handlePlotsSearch}
