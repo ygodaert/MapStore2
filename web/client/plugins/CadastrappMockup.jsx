@@ -10,7 +10,7 @@ import React, { useState } from 'react';
 import Select from 'react-select';
 import { Tabs, Tab, Table, ButtonGroup, Button, ControlLabel, FormControl,
          Tooltip, OverlayTrigger, Row, Col, NavDropdown, MenuItem,
-         DropdownButton, Dropdown,
+         DropdownButton, Dropdown, Checkbox,
          Nav, NavItem, Glyphicon } from "react-bootstrap";
 
 import Modal from "../components/misc/Modal";
@@ -347,7 +347,6 @@ function RequestFormModal(props) {
                 <div className="item-row">
                     <div className="label-col">
                         <ControlLabel>Town, Municipality</ControlLabel>
-                        <div class="text-muted">ex. Rennes, Lannion</div>
                     </div>
                     <div className="form-col">
                         <FormControl type="text" bsSize="sm"></FormControl>
@@ -437,11 +436,19 @@ function PlotSelectionTabActionButtons(props) {
 }
 
 function WelcomeMessage(props) {
-    let className = props.isShown ? "collapse" : "welcome-message";
+    let className = props.isShown ? "welcome-message": "collapse";
+    if (props.data.length > 0)
+        className = "collapse";
+
     return (
-    <div className={className}>
-        <h3>Cadastrapp</h3>
-        <h4>Select desired tool in the left side toolbar to start</h4>
+    <div className={className} style={{textAlign: "center"}}>
+        <Glyphicon glyph="search-coords"
+            style={{margin: "0px",
+                    fontSize: "36px",
+                    }}>
+        </Glyphicon>
+        <h3 style={{marginLeft: "0px", marginTop:"20px"}}>Cadastrapp</h3>
+        <h4 style={{marginLeft: "0px", marginTop:"20px"}}>Select desired tool in the left side toolbar to start</h4>
     </div>
     )
 }
@@ -562,54 +569,48 @@ function CoownershipSearch(props) {
     return (
         <div className={className}>
             <h3>Co-ownership Search</h3>
-
-            <div className="item-row">
-                <div className="label-col">
-                    <ControlLabel>Town Municipality</ControlLabel>
+            <div style={{padding: "10px"}}>
+                <div className="item-row">
+                    <div className="label-col">
+                        <ControlLabel>Town Municipality</ControlLabel>
+                    </div>
+                    <div className="form-col">
+                        <FormControl type="text" bsSize="sm"></FormControl>
+                        <div className="text-muted">ex: Rennes, Cesson-Sevigne</div>
+                    </div>
                 </div>
-                <div className="form-col">
-                    <FormControl type="text" bsSize="sm"></FormControl>
-                    <div className="text-muted">ex: Rennes, Cesson-Sevigne</div>
+
+                <div className="item-row">
+                    <div className="label-col">
+                        <ControlLabel>Last name and First name</ControlLabel>
+                    </div>
+                    <div className="form-col">
+                        <FormControl type="text" bsSize="sm"></FormControl>
+                        <div className="text-muted">ex: Jego Pierre</div>
+                    </div>
+                </div>
+
+                <div className="item-row">
+                    <div className="label-col">
+                        <ControlLabel>Plot id</ControlLabel>
+                    </div>
+                    <div className="form-col">
+                        <FormControl type="text" bsSize="sm"></FormControl>
+                        <div className="text-muted">ex: 20148301032610C0012</div>
+                    </div>
+                </div>
+
+                <div className="item-row">
+                    <div className="label-col">
+                        <ControlLabel>Owner id</ControlLabel>
+                    </div>
+                    <div className="form-col">
+                        <FormControl type="text" bsSize="sm"></FormControl>
+                        <div className="text-muted">ex. 350001+00160</div>
+                    </div>
                 </div>
             </div>
-
-            <div className="item-row">
-                <div className="label-col">
-                    <ControlLabel>Last name and First name</ControlLabel>
-                </div>
-                <div className="form-col">
-                    <FormControl type="text" bsSize="sm"></FormControl>
-                    <div className="text-muted">ex: Jego Pierre</div>
-                </div>
-            </div>
-
-            <div className="item-row">
-                <div className="label-col">
-                    <ControlLabel>Plot id</ControlLabel>
-                </div>
-                <div className="form-col">
-                    <FormControl type="text" bsSize="sm"></FormControl>
-                    <div className="text-muted">ex: 20148301032610C0012</div>
-                </div>
-            </div>
-
-            <div className="item-row">
-                <div className="label-col">
-                    <ControlLabel>Owner id</ControlLabel>
-                </div>
-                <div className="form-col">
-                    <FormControl type="text" bsSize="sm"></FormControl>
-                    <div className="text-muted">ex. 350001+00160</div>
-                </div>
-            </div>
-
-            <ButtonGroup>
-                <Button>Clear</Button>
-                <Button
-                    onClick={props.onSearch}
-                    bsStyle="primary" >Search
-                </Button>
-            </ButtonGroup>
+            <SearchButtons {...props}></SearchButtons>
         </div>
     )
 }
@@ -641,6 +642,7 @@ function PlotsSearch(props) {
                         </div>
                         <div className="form-col">
                             <Select></Select>
+                            <div class="text-muted">ex. Rennes, Cesson-Sévigné</div>
                         </div>
                     </div>
                     <div className="item-row">
@@ -659,14 +661,16 @@ function PlotsSearch(props) {
                         </div>
                         <div className="form-col">
                             <Select></Select>
+                            <div class="text-muted">ex. Rennes, Cesson-Sévigné</div>
                         </div>
                     </div>
                     <div className="item-row">
                         <div className="label-col">
-                            <ControlLabel>Name or locality</ControlLabel>
+                            <ControlLabel>Adress, Roads, Name or locality</ControlLabel>
                         </div>
                         <div className="form-col">
                             <FormControl type="text" bsSize="sm"></FormControl>
+                            <div class="text-muted">ex. Henri Freville or La morinaie</div>
                         </div>
                     </div>
                     <div className="item-row">
@@ -685,6 +689,7 @@ function PlotsSearch(props) {
                         </div>
                         <div className="form-col">
                             <FormControl type="text" bsSize="sm"></FormControl>
+                            <div class="text-muted">ex. 20148301032610C0012</div>
                         </div>
                     </div>
                 </Tab>
@@ -699,6 +704,7 @@ function PlotsSearch(props) {
                                 type="text"
                                 bsSize="sm">
                             </FormControl>
+                            <div class="text-muted">ex. 20148301032610C0012, 20148301032610C0013, 20148301032610C0014</div>
                         </div>
                     </div>
 
@@ -712,14 +718,20 @@ function PlotsSearch(props) {
                     </div>
                 </Tab>
             </Tabs>
-            <ButtonGroup>
-                <Button>Clear</Button>
-                <Button
-                    bsStyle="primary"
-                    onClick={props.onSearch}
-                >Search</Button>
-            </ButtonGroup>
+            <SearchButtons {...props}></SearchButtons>
         </div>
+    )
+}
+
+function SearchButtons(props) {
+    return (
+    <ButtonGroup style={{margin:"10px", float:"right"}}>
+        <Button>Clear</Button>
+        <Button
+            bsStyle="primary"
+            onClick={props.onSearch}
+        >Search</Button>
+    </ButtonGroup>
     )
 }
 
@@ -736,14 +748,27 @@ function OwnersSearch(props) {
                         </div>
                         <div className="form-col">
                             <Select></Select>
+                            <div class="text-muted">ex: Rennes, Cesson-Sevigne</div>
                         </div>
                     </div>
                     <div className="item-row">
                         <div className="label-col">
-                            <ControlLabel>Reference(s)</ControlLabel>
+                            <ControlLabel>Last name and first name</ControlLabel>
                         </div>
                         <div className="form-col">
                             <FormControl type="text" bsSize="sm"></FormControl>
+                            <div class="text-muted">ex: Jeog Pierre</div>
+                        </div>
+                    </div>
+                    <div className="item-row">
+                        <div className="label-col">
+                            <ControlLabel></ControlLabel>
+                        </div>
+                        <div className="form-col">
+                            <Checkbox>
+                                Search by Birth name
+                            </Checkbox>
+                            <div class="text-muted">Echap to load query without completion</div>
                         </div>
                     </div>
                 </Tab>
@@ -754,19 +779,12 @@ function OwnersSearch(props) {
                         </div>
                         <div className="form-col">
                             <Select></Select>
+                            <div class="text-muted">ex: Rennes, Cesson-Sevigne</div>
                         </div>
                     </div>
                     <div className="item-row">
                         <div className="label-col">
-                            <ControlLabel>Name or locality</ControlLabel>
-                        </div>
-                        <div className="form-col">
-                            <FormControl type="text" bsSize="sm"></FormControl>
-                        </div>
-                    </div>
-                    <div className="item-row">
-                        <div className="label-col">
-                            <ControlLabel>Road Number</ControlLabel>
+                            <ControlLabel>Owners</ControlLabel>
                         </div>
                         <div className="form-col">
                             <FormControl type="text" bsSize="sm"></FormControl>
@@ -780,17 +798,12 @@ function OwnersSearch(props) {
                         </div>
                         <div className="form-col">
                             <FormControl type="text" bsSize="sm"></FormControl>
+                            <div class="text-muted">This file must contains comptecommunal id list separate by space or coma</div>
                         </div>
                     </div>
                 </Tab>
             </Tabs>
-            <ButtonGroup>
-                <Button>Clear</Button>
-                <Button
-                    onClick={props.onSearch}
-                    bsStyle="primary" >Search
-                </Button>
-            </ButtonGroup>
+            <SearchButtons {...props}></SearchButtons>
         </div>
     )
 }
@@ -831,7 +844,7 @@ function RequestObjectPlot(props) {
 function CadastrappMockup() {
 
     let [isShown , setIsShown] = useState(false);
-    let [isWelcomeShown , seIsWelcomeShown] = useState(true);
+    let [isWelcomeShown , setIsWelcomeShown] = useState(true);
     let [isRequestFormShown , setIsRequestFormShown] = useState(false);
     let [isInformationFormShown , setIsInformationFormShown] = useState(false);
     let [isPreferencesModalShown , setIsPreferencesModalShown] = useState(false);
@@ -855,7 +868,8 @@ function CadastrappMockup() {
 
 
     const handlePlotsZoom = () => {
-        alert("Plot selection zoom is clicked");
+
+        alert("The user clicks on a selection zoom");
     }
 
     const handlePlotsClear = () => {
@@ -909,7 +923,7 @@ function CadastrappMockup() {
         case "select-by-point":
             console.log(selectionData);
             console.log(selectionData.length);
-            alert("You selected a plot by a point tool. Adding (1) random to plot data to 'Plots Selection' section");
+            alert("The user selected a plot by a point tool. Adding (1) random to plot data to 'Plots Selection' section");
             if (selectionData.length == 0)
                 selectionData = [[]];
             selectionData[activeSelectionTab].push(randomPlot());
@@ -920,7 +934,7 @@ function CadastrappMockup() {
             if (selectionData.length == 0)
                 selectionData = [[]];
 
-            alert("You selected a plot by a linestring tool. Adding (2) random to plot data to 'Plots Selection' section");
+            alert("The user selected a plot by a linestring tool. Adding (2) random to plot data to 'Plots Selection' section");
             selectionData[activeSelectionTab].push(randomPlot());
             selectionData[activeSelectionTab].push(randomPlot());
             setPlotSelectionData(selectionData);
@@ -930,7 +944,7 @@ function CadastrappMockup() {
             if (selectionData.length == 0)
                 selectionData = [[]];
 
-            alert("You selected a plot by a polygon tool. Adding (3) random to plot data to 'Plots Selection' section");
+            alert("The user selected a plot by a polygon tool. Adding (3) random to plot data to 'Plots Selection' section");
             selectionData[activeSelectionTab].push(randomPlot());
             selectionData[activeSelectionTab].push(randomPlot());
             selectionData[activeSelectionTab].push(randomPlot());
@@ -938,7 +952,7 @@ function CadastrappMockup() {
         break;
 
         case "unit-de-fonc":
-            alert("You clicked on unit-de-fonc button, you will redirecting an external service in a new tab");
+            alert("The user clicks on a selection zoom in the map and he is redirected an external web page in a new browser tab");
             url = "https://portail.sig.rennesmetropole.fr/mapfishapp/ws/addons/cadastrapp/html/ficheUniteFonciere.html";
             window.open(url, '_blank');
         break;
@@ -948,6 +962,7 @@ function CadastrappMockup() {
             setIsPlotsSearchShown(true);
             setIsOwnersSearchShown(false);
             setIsCoownershipSearchShown(false);
+            setIsWelcomeShown(false);
         break;
 
         case "search-owners":
@@ -955,6 +970,7 @@ function CadastrappMockup() {
             setIsOwnersSearchShown(true);
             setIsPlotsSearchShown(false);
             setIsCoownershipSearchShown(false);
+            setIsWelcomeShown(false);
         break;
 
         case "coownership":
@@ -962,6 +978,7 @@ function CadastrappMockup() {
             setIsCoownershipSearchShown(true);
             setIsPlotsSearchShown(false);
             setIsOwnersSearchShown(false);
+            setIsWelcomeShown(false);
         break;
 
         case "request-form":
@@ -1046,6 +1063,7 @@ function CadastrappMockup() {
             <div className="right-side pull-left">
                 <WelcomeMessage
                     isShown={isWelcomeShown}
+                    data={plotSelectionData}
                 ></WelcomeMessage>
                 <PlotsSearch
                     isShown={isPlotsSearchShown}
