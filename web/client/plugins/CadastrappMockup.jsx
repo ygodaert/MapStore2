@@ -846,17 +846,12 @@ function RequestObject(props) {
         let r ={...requestObjects};
         let id = randomString(16);
         r[id] = "";
-        console.log(r);
         setRequestObjects(r);
     }
 
     let handleChange = (id, value) => {
-        console.log("change captured")
-        console.log(id);
-        console.log(value);
         let r ={...requestObjects};
         r[id] = value;
-        console.log(r);
         setRequestObjects(r);
     }
 
@@ -908,7 +903,6 @@ function RequestObjectItemCheckboxes() {
 }
 
 function RequestObjectItem(props) {
-    // let [type, setType] = useState('');
     const requestOptions = [
         { value: 'owner-id', label: 'Owner id' },
         { value: 'plot', label: 'Plot' },
@@ -919,9 +913,6 @@ function RequestObjectItem(props) {
         { value: 'lot-co-owners', label: 'Lot co-owners' },
     ]
 
-    console.log("inner");
-    console.log(props.dataId);
-    console.log(props.value);
 
     function ownerId() {
         return (
@@ -1052,7 +1043,6 @@ function RequestObjectItem(props) {
     }
 
     const handleChange = (item)=> {
-        console.log(props.dataId);
         props.onChange(props.dataId, item.value);
         // setType(item.value);
     }
