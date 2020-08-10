@@ -135,14 +135,20 @@
     .tab-pane{
         padding: 10px;
     }
-
 }
 
 .cadastrapp-modal .modal-body{
-    overflow: hidden !important;
+    // overflow: visible !important;
+    // overflow: hidden !important;
+}
+
+.cadastrapp-modal.modal-dialog{
+    margin-top: 40px !important;
 }
 
 // this overrides current value
 .ms-color-picker-overlay{
     z-index: 12000;
 }
+
+.Select.is-open { position: relative; z-index: 10000000; }

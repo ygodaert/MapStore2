@@ -281,6 +281,7 @@ function RequestFormModal(props) {
         { value: '2', label: 'P2 - Representative' },
         { value: '3', label: 'P3 - Normal user' }
     ]
+
     return (
         <Modal
             dialogClassName="cadastrapp-modal"
@@ -359,6 +360,14 @@ function RequestFormModal(props) {
                     </div>
                     <div className="form-col">
                         <FormControl type="text" bsSize="sm"></FormControl>
+                    </div>
+                </div>
+                <div className="item-row">
+                    <div className="label-col">
+                        <ControlLabel>Request Object</ControlLabel>
+                    </div>
+                    <div className="form-col">
+                        <RequestObject></RequestObject>
                     </div>
                 </div>
 
@@ -809,11 +818,78 @@ function OwnersSearch(props) {
 }
 
 function RequestObject(props) {
+    let id = randomString(16);
+    let item = {};
+    item[id] = "";
+    let [requestObjects, setRequestObjects] = useState(item);
 
+    let handleAdd = () => {
+        let r ={...requestObjects};
+        let id = randomString(16);
+        r[id] = "";
+        console.log(r);
+        setRequestObjects(r);
+    }
+
+    let handleChange = (id, value) => {
+        console.log("change captured")
+        console.log(id);
+        console.log(value);
+        let r ={...requestObjects};
+        r[id] = value;
+        console.log(r);
+        setRequestObjects(r);
+    }
+
+    let handleDelete = (id) => {
+        let r ={...requestObjects};
+        delete r[id];
+        setRequestObjects(r);
+    }
+
+    return (
+        <div>
+            <div className="pull-left" style={{width:"100%", marginBottom: 10}}>
+                <Button className="pull-right" onClick={handleAdd}>
+                    <Glyphicon glyph="plus"></Glyphicon>
+                </Button>
+                <small style={{marginRight: 10}}className="pull-right">
+                    Click to add more request object items
+                </small>
+            </div>
+            <div>
+                {Object.keys(requestObjects).map((v)=>(
+                    <RequestObjectItem
+                        dataId={v}
+                        value={requestObjects[v]}
+                        onChange={handleChange}
+                        onDelete={handleDelete}
+                    >
+                    </RequestObjectItem>
+                ))}
+            </div>
+        </div>
+    )
+}
+
+function RequestObjectItemCheckboxes() {
+    return (
+        <div
+            style={{width:"100%"}}>
+            <Checkbox
+                className="pull-left"
+                style={{marginLeft:120}}>
+                Relevé de propriété
+            </Checkbox>
+            <Checkbox>
+                Bordereau parcellaire
+            </Checkbox>
+        </div>
+    )
 }
 
 function RequestObjectItem(props) {
-
+    // let [type, setType] = useState('');
     const requestOptions = [
         { value: 'owner-id', label: 'Owner id' },
         { value: 'plot', label: 'Plot' },
@@ -824,28 +900,168 @@ function RequestObjectItem(props) {
         { value: 'lot-co-owners', label: 'Lot co-owners' },
     ]
 
+    console.log("inner");
+    console.log(props.dataId);
+    console.log(props.value);
+
+    function ownerId() {
+        return (
+            <div>
+                <FormControl
+                    className="pull-left"
+                    placeholder="Municipial account id"
+                    style={{height: 34, width:240}}
+                ></FormControl>
+            </div>
+        )
+    }
+
+    function plot() {
+        return (
+            <div>
+                <Select
+                    placeholder="commune"
+                    style={{width:100, float:"left"}}>
+                </Select>
+                <Select
+                    placeholder="section"
+                    style={{width:100, float:"left"}}>
+                </Select>
+                <Select
+                    placeholder="no"
+                    style={{width:100, float:"left"}}></Select>
+            </div>
+        )
+    }
+
+
+    function coOwners() {
+        return (
+            <div style={{width:"300"}}>
+                <FormControl
+                    className="pull-left"
+                    placeholder="Municipial account id"
+                    style={{height: 34, width:150}}
+                ></FormControl>
+                <FormControl
+                    className="pull-left"
+                    placeholder="Plot id"
+                    style={{height: 34, width:120}}
+                ></FormControl>
+            </div>
+        )
+    }
+
+    function plotId() {
+        return (
+            <div>
+                <FormControl
+                    className="pull-left"
+                    placeholder="Municipial account id"
+                    style={{height: 34, width:200}}
+                ></FormControl>
+            </div>
+        )
+    }
+
+    function owner() {
+        return (
+            <div>
+                <Select
+                    placeholder="commune"
+                    style={{width:100, float:"left"}}>
+                </Select>
+                <Select
+                    placeholder="proprietaire"
+                    style={{width:100, float:"left"}}>
+                </Select>
+            </div>
+        )
+    }
+
+    function cadastrappDemandei() {
+        return (
+            <div>
+                <Select
+                    placeholder="commune"
+                    style={{width:100, float:"left"}}>
+                </Select>
+                <Select
+                    placeholder="proprietaire"
+                    style={{width:100, float:"left"}}>
+                </Select>
+            </div>
+        )
+    }
+
+    function lotCoOwners() {
+        return (
+            <div>
+                <Select
+                    placeholder="commune"
+                    style={{width:90, float:"left"}}>
+                </Select>
+                <Select
+                    placeholder="section"
+                    style={{width:70, float:"left"}}>
+                </Select>
+                <Select
+                    placeholder="no"
+                    style={{width:50, float:"left"}}></Select>
+                <Select
+                    placeholder="proprietaire"
+                    style={{width:100, float:"left"}}>
+                </Select>
+            </div>
+        )
+    }
+
+    let InputTemplate = ()=> <div></div>
+    switch(props.value)
+    {
+        case "owner-id": InputTemplate = ownerId; break;
+        case "plot": InputTemplate = plot; break;
+        case "co-owners": InputTemplate = coOwners; break;
+        case "plot-id": InputTemplate = plotId; break;
+        case "owner": InputTemplate = owner; break;
+        case "cadastrapp-demandei": InputTemplate = cadastrappDemandei; break;
+        case "lot-co-owners": InputTemplate = lotCoOwners; break;
+    }
+
+    let handleDelete = () => {
+        props.onDelete(props.dataId);
+    }
+
+    const handleChange = (item)=> {
+        console.log(props.dataId);
+        props.onChange(props.dataId, item.value);
+        // setType(item.value);
+    }
+
     return (
-        <Row>
-            <Col>
-                <Select options={requestOptions}></Select>
-            </Col>
-        </Row>
+        <div className="pull-left" style={{width: "100%"}}>
+            <Select
+                style={{width:120, float:"left"}}
+                options={requestOptions}
+                value={props.value}
+                onChange={handleChange}>
+            </Select>
+            <InputTemplate></InputTemplate>
+            <Button className="pull-right">
+                <Glyphicon
+                    glyph="trash"
+                    onClick={handleDelete}>
+                </Glyphicon>
+            </Button>
+        </div>
     );
-}
-
-function RequestObjectOwnerId(props) {
-
-}
-
-function RequestObjectPlot(props) {
-
 }
 
 function CadastrappMockup() {
 
     let [isShown , setIsShown] = useState(false);
     let [isWelcomeShown , setIsWelcomeShown] = useState(true);
-    let [isRequestFormShown , setIsRequestFormShown] = useState(false);
+    let [isRequestFormShown , setIsRequestFormShown] = useState(true);
     let [isInformationFormShown , setIsInformationFormShown] = useState(false);
     let [isPreferencesModalShown , setIsPreferencesModalShown] = useState(false);
     let [isPlotsSearchShown , setIsPlotsSearchShown] = useState(false);
