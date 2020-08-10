@@ -8,6 +8,7 @@
 
 import React, { useState } from 'react';
 import Select from 'react-select';
+import { Slider } from 'react-nouislider';
 import { Tabs, Tab, Table, ButtonGroup, Button, ControlLabel, FormControl,
          Tooltip, OverlayTrigger, Row, Col, NavDropdown, MenuItem,
          DropdownButton, Dropdown, Checkbox,
@@ -214,6 +215,24 @@ function InformationFormModal(props) {
         </Modal>
     )
 }
+{/* <div className="mapstore-slider with-tooltip">
+<Slider tooltips step={1}
+    start={[style.weight]}
+    format={{
+        from: value => Math.round(value),
+        to: value => Math.round(value) + ' px'
+    }}
+    range={{min: 1, max: 15}}
+    onChange={(values) => {
+        const weight = parseInt(values[0].replace(' px', ''), 10);
+        const newStyle = assign({}, this.props.shapeStyle, {
+            [styleType]: assign({}, style, {weight}),
+            [otherStyleType]: assign({}, style, {weight})
+        });
+        this.props.setStyleParameter(newStyle);
+    }}
+/>
+</div> */}
 
 function PreferencesModal(props) {
     return (
@@ -232,7 +251,7 @@ function PreferencesModal(props) {
                         <ColorPicker
                                 value={"#ffa"}
                                 line={false}
-                                text={"Highlight Color"}
+                                text={<Glyphicon glyph="dropper" />}
                         />
                     </div>
                 </div>
@@ -260,7 +279,7 @@ function PreferencesModal(props) {
                         <ColorPicker
                                 value={"#faa"}
                                 line={false}
-                                text={"Stroke Color"}
+                                text={<Glyphicon glyph="dropper" />}
                         />
                     </div>
                 </div>
@@ -853,7 +872,7 @@ function RequestObject(props) {
                 <Button className="pull-right" onClick={handleAdd}>
                     <Glyphicon glyph="plus"></Glyphicon>
                 </Button>
-                <small style={{marginRight: 10}}className="pull-right">
+                <small style={{marginTop:5, marginRight: 10}}className="pull-right">
                     Click to add more request object items
                 </small>
             </div>
@@ -1059,9 +1078,9 @@ function RequestObjectItem(props) {
 
 function CadastrappMockup() {
 
-    let [isShown , setIsShown] = useState(false);
+    let [isShown , setIsShown] = useState(true);
     let [isWelcomeShown , setIsWelcomeShown] = useState(true);
-    let [isRequestFormShown , setIsRequestFormShown] = useState(true);
+    let [isRequestFormShown , setIsRequestFormShown] = useState(false);
     let [isInformationFormShown , setIsInformationFormShown] = useState(false);
     let [isPreferencesModalShown , setIsPreferencesModalShown] = useState(false);
     let [isPlotsSearchShown , setIsPlotsSearchShown] = useState(false);
@@ -1072,7 +1091,7 @@ function CadastrappMockup() {
     let [activeToolbar, setActiveToolbar] = useState("");
     let [activeSelectionTab, setActiveSelectionTab] = useState(0);
     let [plotSelectionData, setPlotSelectionData] = useState([]);
-
+    let [searchIndices, setSearchIndices] = useState({"owner": -1, "co-owner": -1, "plot": -1});
 
     // fix this
     let f = ()=> {
@@ -1111,23 +1130,62 @@ function CadastrappMockup() {
     const handlePlotsSearch = (searchParameters) => {
         alert("Plot search is executed, random data is appended to plots selection");
         let selectionData = plotSelectionData.slice();
-        selectionData.push([randomPlot()]);
-        setPlotSelectionData(selectionData);
-        setActiveSelectionTab(selectionData.length - 1);
+        let indices = {...searchIndices}
+        console.log(searchIndices);
+
+        if (searchIndices["plot"] == -1) {
+            selectionData.push([randomPlot()]);
+            indices["plot"] = selectionData.length - 1;
+            setPlotSelectionData(selectionData);
+            setSearchIndices(indices);
+            setActiveSelectionTab(selectionData.length - 1);
+        } else {
+            let index = searchIndices["plot"];
+            selectionData[index].push(randomPlot());
+            setPlotSelectionData(selectionData);
+            setActiveSelectionTab(index);
+        }
     }
 
     const handleOwnersSearch = (searchParameters) => {
         alert("Owner search is executed");
-        // let selectionData = plotSelectionData.slice();
-        // selectionData.push(randomPlot());
-        // setPlotSelectionData(selectionData);
+        let selectionData = plotSelectionData.slice();
+        let indices = {...searchIndices}
+        console.log(searchIndices);
+
+        if (searchIndices["owner"] == -1) {
+            selectionData.push([randomPlot()]);
+            indices["owner"] = selectionData.length - 1;
+            setPlotSelectionData(selectionData);
+            setSearchIndices(indices);
+            setActiveSelectionTab(selectionData.length - 1);
+        } else {
+            let index = searchIndices["owner"];
+            selectionData[index].push(randomPlot());
+            setPlotSelectionData(selectionData);
+            setActiveSelectionTab(index);
+        }
+
     }
 
     const handleCoownershipSearch = (searchParameters) => {
         alert("Coownership search is executed");
-        // let selectionData = plotSelectionData.slice();
-        // selectionData.push(randomPlot());
-        // setPlotSelectionData(selectionData);
+        let selectionData = plotSelectionData.slice();
+        let indices = {...searchIndices}
+        console.log(searchIndices);
+
+        if (searchIndices["co-owner"] == -1) {
+            selectionData.push([randomPlot()]);
+            indices["co-owner"] = selectionData.length - 1;
+            setPlotSelectionData(selectionData);
+            setSearchIndices(indices);
+            setActiveSelectionTab(selectionData.length - 1);
+        } else {
+            let index = searchIndices["co-owner"];
+            selectionData[index].push(randomPlot());
+            setPlotSelectionData(selectionData);
+            setActiveSelectionTab(index);
+        }
     }
 
     const handleToolbarClick = (action) => {
@@ -1236,9 +1294,29 @@ function CadastrappMockup() {
         }
     }
 
-    const handlePlotsSelectionDeleteTab = (index) => {
+    const handlePlotsSelectionDeleteTab = () => {
+
+        let index = activeSelectionTab;
+
         let selectionData = plotSelectionData.slice();
+
+        let indices = {...searchIndices};
+        if(indices["plot"] == index)
+            indices["plot"] = -1;
+
+        if(indices["owner"] == index)
+            indices["owner"] = -1;
+
+        if(indices["co-owner"] == index)
+            indices["co-owner"] = -1;
+
+        if (index < indices["plot"]) indices["plot"]--;
+        if (index < indices["owner"]) indices["owner"]--;
+        if (index < indices["co-owner"]) indices["co-owner"]--;
+
         selectionData.splice(index, 1);
+
+        setSearchIndices(indices);
         setPlotSelectionData(selectionData);
         let active = selectionData.length - 1;
         active = active < 0 ? 0 : active;
