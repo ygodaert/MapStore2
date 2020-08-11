@@ -8,7 +8,8 @@
 
 import React, { useState } from 'react';
 import Select from 'react-select';
-import { Slider } from 'react-nouislider';
+// import { Slider } from 'react-nouislider';
+const Slider = require('react-nouislider');
 import { Tabs, Tab, Table, ButtonGroup, Button, ControlLabel, FormControl,
          Tooltip, OverlayTrigger, Row, Col, NavDropdown, MenuItem,
          DropdownButton, Dropdown, Checkbox,
@@ -103,7 +104,12 @@ function InformationFormModal(props) {
             <Modal.Body>
                 <Tabs defaultActiveKey={1} id="uncontrolled-tab-example">
                     <Tab eventKey={1} title="Plot">
-                    <Button>Plot Information</Button>
+                    <div style={{margin:10}}>
+                            <Button>
+                                <Glyphicon glyph="1-pdf"></Glyphicon>
+                                Plot Information
+                            </Button>
+                        </div>
                     <Table condensed>
                         <thead>
                             <tr>
@@ -144,7 +150,12 @@ function InformationFormModal(props) {
                     </Table>
                     </Tab>
                     <Tab eventKey={2} title="Owners">
-                        <Button>Properties List</Button>
+                        <div style={{margin:10}}>
+                            <Button>
+                                <Glyphicon glyph="1-pdf"></Glyphicon>
+                                Properties List
+                            </Button>
+                            </div>
                         <Table condensed>
                             <thead>
                                 <tr>
@@ -174,7 +185,12 @@ function InformationFormModal(props) {
 
                     </Tab>
                     <Tab eventKey={3} title="Co-Owners">
-                        <Button>Properties List</Button>
+                        <div style={{margin:10}}>
+                            <Button>
+                                <Glyphicon glyph="1-pdf"></Glyphicon>
+                                Properties List
+                            </Button>
+                        </div>
                         <Table condensed>
                             <thead>
                                 <tr>
@@ -203,47 +219,87 @@ function InformationFormModal(props) {
                         </Table>
                     </Tab>
                     <Tab eventKey={4} title="Building(s)">
-                        <Button>Properties List</Button>
-                        <Button>Description</Button>
-                        <Button>Bundle</Button>
-
+                        <div style={{margin:10}}>
+                            <span style={{marginRight: 10}}>Batiments:</span>
+                            <Button>A</Button>
+                            <Button>B</Button>
+                        </div>
+                        <div style={{margin:10}}>
+                            <Button>
+                                <Glyphicon glyph="1-pdf"></Glyphicon>
+                                Properties List
+                            </Button>
+                            <Button>
+                                <Glyphicon glyph="1-pdf"></Glyphicon>
+                                Description</Button>
+                            <Button>
+                                <Glyphicon glyph="1-pdf"></Glyphicon>
+                                Bundle</Button>
+                        </div>
+                        <Table condensed>
+                            <thead>
+                                <tr>
+                                    <th>Level</th>
+                                    <th>Door</th>
+                                    <th>Type</th>
+                                    <th>Cre</th>
+                                    <th>Income</th>
+                                    <th>Identifier</th>
+                                    <th>Usage Name</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th>00</th>
+                                    <th>01</th>
+                                    <th>Habitation</th>
+                                    <th>1954</th>
+                                    <th>1502</th>
+                                    <th>35028763271</th>
+                                    <th>M MARTIN ANDRE</th>
+                                </tr>
+                                <tr>
+                                    <th>00</th>
+                                    <th>01</th>
+                                    <th>Habitation</th>
+                                    <th>1954</th>
+                                    <th>1502</th>
+                                    <th>35028763271</th>
+                                    <th>M MARTIN ANDRE</th>
+                                </tr>
+                                <tr>
+                                    <th>00</th>
+                                    <th>01</th>
+                                    <th>Habitation</th>
+                                    <th>1954</th>
+                                    <th>1502</th>
+                                    <th>35028763271</th>
+                                    <th>M MARTIN ANDRE</th>
+                                </tr>
+                            </tbody>
+                        </Table>
                     </Tab>
-                    <Tab eventKey={5} title="Subdivisions Fiscales"></Tab>
-                    <Tab eventKey={6} title="Mutation History"></Tab>
+                    {/* <Tab eventKey={5} title="Subdivisions Fiscales"></Tab>
+                    <Tab eventKey={6} title="Mutation History"></Tab> */}
                 </Tabs>
             </Modal.Body>
         </Modal>
     )
 }
-{/* <div className="mapstore-slider with-tooltip">
-<Slider tooltips step={1}
-    start={[style.weight]}
-    format={{
-        from: value => Math.round(value),
-        to: value => Math.round(value) + ' px'
-    }}
-    range={{min: 1, max: 15}}
-    onChange={(values) => {
-        const weight = parseInt(values[0].replace(' px', ''), 10);
-        const newStyle = assign({}, this.props.shapeStyle, {
-            [styleType]: assign({}, style, {weight}),
-            [otherStyleType]: assign({}, style, {weight})
-        });
-        this.props.setStyleParameter(newStyle);
-    }}
-/>
-</div> */}
+
 
 function PreferencesModal(props) {
     return (
         <Modal
-            dialogClassName="cadastrapp-modal"
+            dialogClassName="cadastrapp-preferences-modal"
             show={props.isShown} onHide={props.onClose}>
             <Modal.Header closeButton>
                 <Modal.Title>Preferences</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <div className="item-row">
+                <Tabs defaultActiveKey={1} >
+                    <Tab eventKey={1} title="Default">
+                    <div className="item-row">
                     <div className="label-col">
                         <ControlLabel>Highlight Color</ControlLabel>
                     </div>
@@ -260,7 +316,13 @@ function PreferencesModal(props) {
                         <ControlLabel>Opacity</ControlLabel>
                     </div>
                     <div className="form-col">
-                        <Select></Select>
+                        <div className="mapstore-slider with-tooltip">
+                            <Slider
+                                start={0}
+                                step={0.02}
+                                range={{min: 0, max: 1}}
+                            ></Slider>
+                        </div>
                     </div>
                 </div>
                 <div className="item-row">
@@ -268,7 +330,13 @@ function PreferencesModal(props) {
                         <ControlLabel>Stroke</ControlLabel>
                     </div>
                     <div className="form-col">
-                        <Select></Select>
+                        <div className="mapstore-slider with-tooltip">
+                            <Slider
+                                start={0.5}
+                                step={0.1}
+                                range={{min: 0, max: 3}}
+                            ></Slider>
+                        </div>
                     </div>
                 </div>
                 <div className="item-row">
@@ -283,6 +351,68 @@ function PreferencesModal(props) {
                         />
                     </div>
                 </div>
+
+                    </Tab>
+                    <Tab eventKey={2} title="Selected">
+                    <div className="item-row">
+                    <div className="label-col">
+                        <ControlLabel>Highlight Color</ControlLabel>
+                    </div>
+                    <div className="form-col">
+                        <ColorPicker
+                                value={"#555"}
+                                line={false}
+                                text={<Glyphicon glyph="dropper" />}
+                        />
+                    </div>
+                </div>
+                <div className="item-row">
+                    <div className="label-col">
+                        <ControlLabel>Opacity</ControlLabel>
+                    </div>
+                    <div className="form-col">
+                        <div className="mapstore-slider with-tooltip">
+                            <Slider
+                                start={0}
+                                step={0.02}
+                                range={{min: 0, max: 1}}
+                            ></Slider>
+                        </div>
+                    </div>
+                </div>
+                <div className="item-row">
+                    <div className="label-col">
+                        <ControlLabel>Stroke</ControlLabel>
+                    </div>
+                    <div className="form-col">
+                        <div className="mapstore-slider with-tooltip">
+                            <Slider
+                                start={0.5}
+                                step={0.1}
+                                range={{min: 0, max: 3}}
+                            ></Slider>
+                        </div>
+                    </div>
+                </div>
+                <div className="item-row">
+                    <div className="label-col">
+                        <ControlLabel>Stroke Color</ControlLabel>
+                    </div>
+                    <div className="form-col">
+                        <ColorPicker
+                                value={"#aaf"}
+                                line={false}
+                                text={<Glyphicon glyph="dropper" />}
+                        />
+                    </div>
+                </div>
+
+                    </Tab>
+
+                </Tabs>
+
+
+
             </Modal.Body>
             <Modal.Footer>
                 <Button>Set default style</Button>
@@ -300,6 +430,8 @@ function RequestFormModal(props) {
         { value: '2', label: 'P2 - Representative' },
         { value: '3', label: 'P3 - Normal user' }
     ]
+
+
 
     return (
         <Modal
@@ -381,6 +513,27 @@ function RequestFormModal(props) {
                         <FormControl type="text" bsSize="sm"></FormControl>
                     </div>
                 </div>
+
+                <div className="item-row">
+                    <div className="label-col">
+                        <ControlLabel>Request ask by</ControlLabel>
+                    </div>
+                    <div className="form-col">
+
+                    </div>
+                </div>
+
+                <div className="item-row">
+                    <div className="label-col">
+                        <ControlLabel>Give document by</ControlLabel>
+                    </div>
+                    <div className="form-col">
+
+                    </div>
+                </div>
+
+
+
                 <div className="item-row">
                     <div className="label-col">
                         <ControlLabel>Request Object</ControlLabel>
@@ -658,6 +811,21 @@ function CoownershipSearch(props) {
 
 
 function PlotsSearch(props) {
+    const unitOptions = [
+        { value: '--', label: '--'},
+        { value: 'bis', label: 'bis'},
+        { value: 'ter', label: 'ter'},
+        { value: 'quater', label: 'quater'},
+        { value: 'A', label: 'A'},
+        { value: 'B', label: 'B'},
+        { value: 'C', label: 'C'},
+        { value: 'D', label: 'D'},
+        { value: 'E', label: 'E'},
+        { value: 'F', label: 'F'},
+        { value: 'G', label: 'G'},
+        { value: 'H', label: 'H'},
+    ]
+
     const className = props.isShown ? "plots-search" : "collapse";
     return (
         <div className={className}>
@@ -678,11 +846,12 @@ function PlotsSearch(props) {
                             <ControlLabel>Reference(s)</ControlLabel>
                         </div>
                         <div className="form-col">
-                            <FormControl type="text" bsSize="sm"></FormControl>
+                            <ReferencesList></ReferencesList>
                         </div>
                     </div>
                 </Tab>
-                <Tab eventKey={2} title="Cadastral Addr.">
+                <Tab eventKey={2} title="Cadastral Addr."
+                    style={{height:220, overflow:"visible"}}>
                     <div className="item-row">
                         <div className="label-col">
                             <ControlLabel>Town, Municipality</ControlLabel>
@@ -706,7 +875,11 @@ function PlotsSearch(props) {
                             <ControlLabel>Road Number</ControlLabel>
                         </div>
                         <div className="form-col">
-                            <FormControl type="text" bsSize="sm"></FormControl>
+                            <FormControl style={{height: 35, width:100, float:"left"}}type="text" bsSize="sm"></FormControl>
+                            <Select
+                            menuPortalTarget={document.querySelector('body')}
+                            style={{width:100 , float:"left"}} options={unitOptions}></Select>
+                            <span style={{marginLeft:5, marginTop:5}} className="text-muted ">ex. 4 TER</span>
                         </div>
                     </div>
                 </Tab>
@@ -721,7 +894,8 @@ function PlotsSearch(props) {
                         </div>
                     </div>
                 </Tab>
-                <Tab eventKey={4} title="Lot">
+                <Tab eventKey={4} title="Lot"
+                    style={{height:220, overflow:"visible"}}>
                     <div className="item-row">
                         <div className="label-col">
                             <ControlLabel>Identifiers</ControlLabel>
@@ -738,10 +912,25 @@ function PlotsSearch(props) {
 
                     <div className="item-row">
                         <div className="label-col">
+                            <ControlLabel></ControlLabel>
+                        </div>
+                        <div className="form-col">
+                            <div style={{textAlign:"center"}} class="text-muted">or</div>
+                        </div>
+                    </div>
+
+                    <div className="item-row">
+                        <div className="label-col">
                             <ControlLabel>Path</ControlLabel>
                         </div>
                         <div className="form-col">
-                            <FormControl type="text" bsSize="sm"></FormControl>
+                            <FormControl
+                                className="pull-left"
+                                style={{width:210}}
+                                placeholder="Load csv file" type="text" bsSize="sm">
+                            </FormControl>
+                            <Button style={{width:100}}>Open File</Button>
+                            <div class="text-muted">This file must contains comptecommunal id list separate by space or coma</div>
                         </div>
                     </div>
                 </Tab>
@@ -760,6 +949,142 @@ function SearchButtons(props) {
             onClick={props.onSearch}
         >Search</Button>
     </ButtonGroup>
+    )
+}
+
+function ReferencesList() {
+    let [items, setItems] = useState([["",""]])
+
+    let handleDelete = (index)=> {
+        return () => {
+            let i = items.slice();
+            console.log("deleting " + index);
+            i.splice(index, 1);
+            setItems(i);
+        }
+    }
+
+    let handleChange = (index,elementIndex)=> {
+        return (e) => {
+            let i = items.slice();
+            // i[index]
+            // console.log("change captured" + index);
+            // console.log(e.target.value);
+            i[index][elementIndex] = e.target.value;
+            // let i = items.splice(index, 1);
+            setItems(i);
+        }
+    }
+
+    let handleAdd = ()=> {
+        let i = items.slice();
+        i.push(["",""]);
+        setItems(i);
+    }
+
+    return (
+        <>
+        <div style={{width:"100%", float:"left", marginBottom: 10}}>
+
+            <Button
+                onClick={handleAdd}
+                className="pull-left">
+                <Glyphicon glyph="plus"></Glyphicon>
+
+            </Button>
+            <span
+                style={{marginLeft:6, marginTop:4}}
+                className="pull-left">Click to add a new reference</span>
+        </div>
+        {items.map((v, index)=>(
+            <div style={{widthh:"100%", float:"left"}}>
+                <FormControl
+                    value={v[0]}
+                    className="pull-left"
+                    style={{width:120, marginTop:3, marginRight: 3}}
+                    onChange={handleChange(index,0)}
+                ></FormControl>
+                <FormControl
+                    value={v[1]}
+                    className="pull-left"
+                    style={{width:120, marginTop:3, marginRight: 3}}
+                    onChange={handleChange(index,1)}
+                ></FormControl>
+                <Button
+                    style={{marginTop:3, marginRight: 3}}
+                    className="pull-right"
+                    onClick={handleDelete(index)}
+                >
+                    <Glyphicon glyph="trash"></Glyphicon>
+                </Button>
+            </div>
+        ))}
+        </>
+    )
+}
+
+function StrList(props) {
+    let [items, setItems] = useState([""])
+
+    let handleDelete = (index)=> {
+        return () => {
+            let i = items.slice();
+            console.log("deleting " + index);
+            i.splice(index, 1);
+            setItems(i);
+        }
+    }
+
+    let handleChange = (index)=> {
+        return (e) => {
+            let i = items.slice();
+            // i[index]
+            // console.log("change captured" + index);
+            // console.log(e.target.value);
+            i[index] = e.target.value;
+            // let i = items.splice(index, 1);
+            setItems(i);
+        }
+    }
+
+    let handleAdd = ()=> {
+        let i = items.slice();
+        i.push("");
+        setItems(i);
+    }
+
+    return (
+        <>
+        <div style={{width:"100%", float:"left", marginBottom: 10}}>
+
+            <Button
+                onClick={handleAdd}
+                className="pull-left">
+                <Glyphicon glyph="plus"></Glyphicon>
+
+            </Button>
+            <span
+                style={{marginLeft:6, marginTop:4}}
+                className="pull-left">Click to add a new owner</span>
+        </div>
+        {items.map((v, index)=>(
+            <div style={{widthh:"100%", float:"left"}}>
+                <FormControl
+                    value={v}
+                    className="pull-left"
+                    style={{width:240, marginTop: 5, marginRight: 5}}
+                    onChange={handleChange(index)}
+                ></FormControl>
+                <Button
+                    style={{marginTop: 5, marginRight: 5}}
+                    className="pull-right"
+                    onClick={handleDelete(index)}
+                >
+                    <Glyphicon glyph="trash"></Glyphicon>
+                </Button>
+            </div>
+        ))}
+        </>
     )
 }
 
@@ -784,7 +1109,7 @@ function OwnersSearch(props) {
                             <ControlLabel>Last name and first name</ControlLabel>
                         </div>
                         <div className="form-col">
-                            <FormControl type="text" bsSize="sm"></FormControl>
+                            <Select></Select>
                             <div class="text-muted">ex: Jeog Pierre</div>
                         </div>
                     </div>
@@ -815,17 +1140,22 @@ function OwnersSearch(props) {
                             <ControlLabel>Owners</ControlLabel>
                         </div>
                         <div className="form-col">
-                            <FormControl type="text" bsSize="sm"></FormControl>
+                            <StrList></StrList>
                         </div>
                     </div>
                 </Tab>
                 <Tab eventKey={3} title="Lot">
                     <div className="item-row">
                         <div className="label-col">
-                            <ControlLabel>Identifier</ControlLabel>
+                            <ControlLabel>Path</ControlLabel>
                         </div>
                         <div className="form-col">
-                            <FormControl type="text" bsSize="sm"></FormControl>
+                            <FormControl
+                                className="pull-left"
+                                style={{width:210}}
+                                placeholder="Load csv file" type="text" bsSize="sm">
+                            </FormControl>
+                            <Button style={{width:100}}>Open File</Button>
                             <div class="text-muted">This file must contains comptecommunal id list separate by space or coma</div>
                         </div>
                     </div>
@@ -1183,6 +1513,10 @@ function CadastrappMockup() {
         let url;
         let selectionData = plotSelectionData.slice();
         switch(action) {
+
+        case "zoom":
+            alert("The user clicked on zoom");
+        break;
 
         case "select-by-point":
             console.log(selectionData);
