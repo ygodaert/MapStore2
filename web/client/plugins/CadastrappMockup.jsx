@@ -8,12 +8,11 @@
 
 import React, { useState } from 'react';
 import Select from 'react-select';
-// import { Slider } from 'react-nouislider';
 const Slider = require('react-nouislider');
 import { Tabs, Tab, Table, ButtonGroup, Button, ControlLabel, FormControl,
          Tooltip, OverlayTrigger, Row, Col, NavDropdown, MenuItem,
-         DropdownButton, Dropdown, Checkbox,
-         Nav, NavItem, Glyphicon } from "react-bootstrap";
+         DropdownButton, Checkbox, Radio, FormGroup,
+         Panel, Nav, NavItem, Glyphicon } from "react-bootstrap";
 
 import Modal from "../components/misc/Modal";
 import { createPlugin } from '../utils/PluginsUtils';
@@ -40,7 +39,8 @@ function randomPlot() {
         randomData[randomInt(randomData.length)][1],
         randomData[randomInt(randomData.length)][2],
         randomData[randomInt(randomData.length)][3],
-        randomData[randomInt(randomData.length)][4]
+        randomData[randomInt(randomData.length)][4],
+        false
     ]
     return d;
 }
@@ -56,7 +56,7 @@ function MainToolbar(props) {
         ["map-marker", "select-by-point", "Select / Activate / Unselect one plot with a simple click "],
         ["polyline", "select-by-linestring", "Select / Activate / Unselect plots which intersects a line"],
         ["polygon", "select-by-polygon", "Select / Activate / Unselect plots which intersects a polygon"],
-        ["search-coords", "unit-de-fonc", "Landed property information"],
+        ["th-list", "unit-de-fonc", "Landed property information"],
         ["zoom-to", "search-plots", "Plots Search"],
         ["search", "search-owners", "Owners Search"],
         ["user", "coownership", "Co-ownership data Search"],
@@ -91,7 +91,256 @@ function MainToolbar(props) {
     )
 }
 
+function InformationFormPropertyListRadio(props) {
+
+    let className = props.isShown ? "" : "collapse";
+
+    return (
+    <div className={className}>
+        <hr></hr>
+        <div
+            style={{width:"70%"}}
+            className="pull-left">
+            <FormGroup>
+                <small style={{marginRight: 15}}>Data to extract: </small>
+
+                <Radio name="radioGroup" inline>
+                    Only this plot
+                </Radio>
+                <Radio name="radioGroup" inline>
+                    All Properties
+                </Radio>
+            </FormGroup>
+            <FormGroup>
+                <small style={{marginRight: 15}}>Choose output format:</small>
+                <Radio name="radioGroup" inline>
+                    Export as PDF
+                </Radio>
+                <Radio name="radioGroup" inline>
+                    Export as CSV
+                </Radio>
+            </FormGroup>
+        </div>
+        <div
+            style={{width:"30%"}}
+            className="pull-left">
+            <Button
+                onClick={props.onGenerateClick}
+                className="pull-right">Cadastrapp.generate</Button>
+        </div>
+        <hr></hr>
+    </div>)
+}
+
+function InformationFormBuildingsButtons(props) {
+    return (
+    <>
+        <ButtonGroup className="pull-right">
+            <OverlayTrigger placement="bottom" overlay={<Tooltip>{"Properties List"}</Tooltip>}>
+                <Button
+                    onClick={props.onPropertiesClick}>
+                    <Glyphicon glyph="th-list"/>
+                </Button>
+            </OverlayTrigger>
+            <OverlayTrigger placement="bottom" overlay={<Tooltip>{"Description"}</Tooltip>}>
+                <Button>
+                    <Glyphicon glyph="info-sign"/>
+                </Button>
+            </OverlayTrigger>
+            <OverlayTrigger placement="bottom" overlay={<Tooltip>{"Bundle"}</Tooltip>}>
+                <Button
+
+                ><Glyphicon glyph="compressed"/></Button>
+            </OverlayTrigger>
+        </ButtonGroup>
+    </>
+    )
+}
+
+function InformationFormOwnersContent() {
+    return (
+        <Table condensed>
+            <thead>
+                <tr>
+                    <th>Identifier</th>
+                    <th>Identifier</th>
+                    <th>Last Name</th>
+                    <th>Address</th>
+                    <th>Date of birth</th>
+                    <th>Birth Location</th>
+                    <th>Right Code</th>
+                    <th>legal form</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>P</td>
+                    <td>350231+13232</td>
+                    <td>COMMUNE DE RENNES</td>
+                    <td>SERVICES IMMOBIL CS63123 PLE DE LA MAIRIE</td>
+                    <td></td>
+                    <td></td>
+                    <td>PROPRIETAIRE</td>
+                    <td>COM</td>
+                </tr>
+                <tr>
+                    <td>P</td>
+                    <td>350231+13232</td>
+                    <td>COMMUNE DE RENNES</td>
+                    <td>SERVICES IMMOBIL CS63123 PLE DE LA MAIRIE</td>
+                    <td></td>
+                    <td></td>
+                    <td>PROPRIETAIRE</td>
+                    <td>COM</td>
+                </tr>
+            </tbody>
+        </Table>
+    )
+}
+
+function InformationFormModalContent() {
+
+    let [isRadioShown, setIsRadioShown] = useState(false);
+
+    const onPropertiesClick = ()=> {
+        setIsRadioShown(true);
+    }
+
+    const onGenerateClick = () => {
+        setIsRadioShown(false);
+    }
+
+    return (
+    <Tabs defaultActiveKey={1} id="uncontrolled-tab-example">
+        <Tab eventKey={1} title="Plot">
+            <div style={{margin:10}}>
+                <Button>
+                    <Glyphicon glyph="1-pdf"></Glyphicon>
+                    Plot Information
+                </Button>
+            </div>
+            <Table condensed>
+                <thead>
+                    <tr>
+                        <th>Description</th>
+                        <th>Valeur</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>Town</td><td>Rennes(359329)</td></tr>
+                    <tr><td>Section</td><td>AP</td></tr>
+                    <tr><td>Plot</td><td>851</td></tr>
+                    <tr><td>Voie</td><td>5162</td></tr>
+                    <tr><td>Address</td><td>RUEJULIEN OFFRAY D LA METTRIE</td></tr>
+                    <tr><td>Size DGFIP in m2</td><td>277</td></tr>
+                    <tr><td>Size in m2</td><td>288</td></tr>
+                    <tr><td>Plot with building</td><td>no</td></tr>
+                    <tr><td>Plot with building</td><td>no</td></tr>
+                </tbody>
+            </Table>
+        </Tab>
+        <Tab eventKey={2} title="Owners">
+            <div style={{margin:10}}>
+                <Button>
+                    <Glyphicon glyph="1-pdf"></Glyphicon>
+                    Properties List
+                </Button>
+            </div>
+            <InformationFormOwnersContent></InformationFormOwnersContent>
+        </Tab>
+        <Tab eventKey={3} title="Co-Owners">
+            <div style={{margin:10}}>
+                <Button>
+                    <Glyphicon glyph="1-pdf"></Glyphicon>
+                    Properties List
+                </Button>
+            </div>
+            <InformationFormOwnersContent></InformationFormOwnersContent>
+        </Tab>
+        <Tab eventKey={4} title="Building(s)">
+            <div style={{margin:10}}>
+                <span style={{marginRight: 10}}>Batiments:</span>
+                <Button>A</Button>
+                <Button>B</Button>
+                <InformationFormBuildingsButtons
+                    onPropertiesClick={onPropertiesClick}
+                    className="pull-left">
+                </InformationFormBuildingsButtons>
+            </div>
+            <InformationFormPropertyListRadio
+                onGenerateClick={onGenerateClick}
+                isShown={isRadioShown}>
+            </InformationFormPropertyListRadio>
+            <Table condensed>
+                <thead>
+                    <tr>
+                        <th>Level</th>
+                        <th>Door</th>
+                        <th>Type</th>
+                        <th>Cre</th>
+                        <th>Income</th>
+                        <th>Identifier</th>
+                        <th>Usage Name</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>00</td>
+                        <td>01</td>
+                        <td>Habitation</td>
+                        <td>1954</td>
+                        <td>1502</td>
+                        <td>35028763271</td>
+                        <td>M MARTIN ANDRE</td>
+                    </tr>
+                    <tr>
+                        <td>00</td>
+                        <td>01</td>
+                        <td>Habitation</td>
+                        <td>1954</td>
+                        <td>1502</td>
+                        <td>35028763271</td>
+                        <td>M MARTIN ANDRE</td>
+                    </tr>
+                    <tr>
+                        <td>00</td>
+                        <td>01</td>
+                        <td>Habitation</td>
+                        <td>1954</td>
+                        <td>1502</td>
+                        <td>35028763271</td>
+                        <td>M MARTIN ANDRE</td>
+                    </tr>
+                </tbody>
+            </Table>
+        </Tab>
+        {/* <Tab eventKey={5} title="Subdivisions Fiscales"></Tab>
+        <Tab eventKey={6} title="Mutation History"></Tab> */}
+    </Tabs>
+    )
+}
+
 function InformationFormModal(props) {
+
+    const handleClick = (index) => {
+        props.onPanelExpand(index);
+    }
+
+    let tab = props.data[props.active];
+    let items = [];
+
+    if (typeof tab == "undefined") {
+
+    } else {
+        for (let i=0;i<tab.length;i++){
+
+            if (tab[i][5])
+                items.push(tab[i][0] + tab[i][1] + tab[i][2])
+        }
+    }
+
+
+
     return (
         <Modal
             dialogClassName="cadastrapp-modal"
@@ -102,186 +351,20 @@ function InformationFormModal(props) {
                 <Modal.Title>Information Form</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <Tabs defaultActiveKey={1} id="uncontrolled-tab-example">
-                    <Tab eventKey={1} title="Plot">
-                    <div style={{margin:10}}>
-                            <Button>
-                                <Glyphicon glyph="1-pdf"></Glyphicon>
-                                Plot Information
-                            </Button>
-                        </div>
-                    <Table condensed>
-                        <thead>
-                            <tr>
-                                <th>Description</th>
-                                <th>Valeur</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Town</td><td>Rennes(359329)</td>
-                            </tr>
-                            <tr>
-                                <td>Section</td><td>AP</td>
-                            </tr>
-                            <tr>
-                                <td>Plot</td><td>851</td>
-                            </tr>
-                            <tr>
-                                <td>Voie</td><td>5162</td>
-                            </tr>
-                            <tr>
-                                <td>Address</td><td>RUEJULIEN OFFRAY D LA METTRIE</td>
-                            </tr>
-                            <tr>
-                                <td>Size DGFIP in m2</td><td>277</td>
-                            </tr>
-                            <tr>
-                                <td>Size in m2</td><td>288</td>
-                            </tr>
-                            <tr>
-                                <td>Plot with building</td><td>no</td>
-                            </tr>
-                            <tr>
-                                <td>Plot with building</td><td>no</td>
-                            </tr>
-
-                        </tbody>
-                    </Table>
-                    </Tab>
-                    <Tab eventKey={2} title="Owners">
-                        <div style={{margin:10}}>
-                            <Button>
-                                <Glyphicon glyph="1-pdf"></Glyphicon>
-                                Properties List
-                            </Button>
-                            </div>
-                        <Table condensed>
-                            <thead>
-                                <tr>
-                                    <th>Identifier</th>
-                                    <th>Identifier</th>
-                                    <th>Last Name</th>
-                                    <th>Address</th>
-                                    <th>Date of birth</th>
-                                    <th>Birth Location</th>
-                                    <th>Right Code</th>
-                                    <th>legal form</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <th>P</th>
-                                    <th>350231+13232</th>
-                                    <th>COMMUNE DE RENNES</th>
-                                    <th>SERVICES IMMOBIL CS63123 PLE DE LA MAIRIE</th>
-                                    <th></th>
-                                    <th></th>
-                                    <th>PROPRIETAIRE</th>
-                                    <th>COM</th>
-                                </tr>
-                            </tbody>
-                        </Table>
-
-                    </Tab>
-                    <Tab eventKey={3} title="Co-Owners">
-                        <div style={{margin:10}}>
-                            <Button>
-                                <Glyphicon glyph="1-pdf"></Glyphicon>
-                                Properties List
-                            </Button>
-                        </div>
-                        <Table condensed>
-                            <thead>
-                                <tr>
-                                    <th>Identifier</th>
-                                    <th>Identifier</th>
-                                    <th>Last Name</th>
-                                    <th>Address</th>
-                                    <th>Date of birth</th>
-                                    <th>Birth Location</th>
-                                    <th>Right Code</th>
-                                    <th>legal form</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <th>P</th>
-                                    <th>350231+13232</th>
-                                    <th>COMMUNE DE RENNES</th>
-                                    <th>SERVICES IMMOBIL CS63123 PLE DE LA MAIRIE</th>
-                                    <th></th>
-                                    <th></th>
-                                    <th>PROPRIETAIRE</th>
-                                    <th>COM</th>
-                                </tr>
-                            </tbody>
-                        </Table>
-                    </Tab>
-                    <Tab eventKey={4} title="Building(s)">
-                        <div style={{margin:10}}>
-                            <span style={{marginRight: 10}}>Batiments:</span>
-                            <Button>A</Button>
-                            <Button>B</Button>
-                        </div>
-                        <div style={{margin:10}}>
-                            <Button>
-                                <Glyphicon glyph="1-pdf"></Glyphicon>
-                                Properties List
-                            </Button>
-                            <Button>
-                                <Glyphicon glyph="1-pdf"></Glyphicon>
-                                Description</Button>
-                            <Button>
-                                <Glyphicon glyph="1-pdf"></Glyphicon>
-                                Bundle</Button>
-                        </div>
-                        <Table condensed>
-                            <thead>
-                                <tr>
-                                    <th>Level</th>
-                                    <th>Door</th>
-                                    <th>Type</th>
-                                    <th>Cre</th>
-                                    <th>Income</th>
-                                    <th>Identifier</th>
-                                    <th>Usage Name</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <th>00</th>
-                                    <th>01</th>
-                                    <th>Habitation</th>
-                                    <th>1954</th>
-                                    <th>1502</th>
-                                    <th>35028763271</th>
-                                    <th>M MARTIN ANDRE</th>
-                                </tr>
-                                <tr>
-                                    <th>00</th>
-                                    <th>01</th>
-                                    <th>Habitation</th>
-                                    <th>1954</th>
-                                    <th>1502</th>
-                                    <th>35028763271</th>
-                                    <th>M MARTIN ANDRE</th>
-                                </tr>
-                                <tr>
-                                    <th>00</th>
-                                    <th>01</th>
-                                    <th>Habitation</th>
-                                    <th>1954</th>
-                                    <th>1502</th>
-                                    <th>35028763271</th>
-                                    <th>M MARTIN ANDRE</th>
-                                </tr>
-                            </tbody>
-                        </Table>
-                    </Tab>
-                    {/* <Tab eventKey={5} title="Subdivisions Fiscales"></Tab>
-                    <Tab eventKey={6} title="Mutation History"></Tab> */}
-                </Tabs>
+                {items.map((r, index)=> {
+                    let className = props.expanded[index] ? "selected-panel" : "unselected-panel";
+                    let header = <div className={className} onClick={() => { handleClick(index)}}>{r}</div>
+                    return (
+                    <Panel
+                        className="mapstore-side-card ms-sm"
+                        collapsible
+                        eventKey={index.toString()}
+                        header={header}>
+                        <InformationFormModalContent>
+                        </InformationFormModalContent>
+                    </Panel>
+                )
+                })}
             </Modal.Body>
         </Modal>
     )
@@ -410,9 +493,6 @@ function PreferencesModal(props) {
                     </Tab>
 
                 </Tabs>
-
-
-
             </Modal.Body>
             <Modal.Footer>
                 <Button>Set default style</Button>
@@ -431,7 +511,32 @@ function RequestFormModal(props) {
         { value: '3', label: 'P3 - Normal user' }
     ]
 
+    let [userType, setUserType] = useState("");
+    let [radioClass, setRadioClass] = useState("collapse");
+    let [requestClass, setRequestClass] = useState("collapse");
 
+    const handleLastNameChange = (e) =>{
+
+        if (e.target.value.length > 2) {
+            setRequestClass("item-row");
+        } else {
+            setRequestClass("collapse");
+        }
+    }
+
+    const handleChange = (item)=> {
+        console.log(item.value);
+        setUserType(item.value)
+
+        if (item.value == 3)
+        {
+            setRadioClass("collapse");
+        }
+        else
+        {
+            setRadioClass("item-row");
+        }
+    }
 
     return (
         <Modal
@@ -447,7 +552,7 @@ function RequestFormModal(props) {
                         <ControlLabel>Request User Type</ControlLabel>
                     </div>
                     <div className="form-col">
-                        <Select options={userTypeOptions}></Select>
+                        <Select value={userType} onChange={handleChange} options={userTypeOptions}></Select>
                     </div>
                 </div>
 
@@ -465,7 +570,7 @@ function RequestFormModal(props) {
                         <ControlLabel>Last Name</ControlLabel>
                     </div>
                     <div className="form-col">
-                        <FormControl type="text" bsSize="sm"></FormControl>
+                        <FormControl onChange={handleLastNameChange} type="text" bsSize="sm"></FormControl>
                     </div>
                 </div>
 
@@ -513,34 +618,54 @@ function RequestFormModal(props) {
                         <FormControl type="text" bsSize="sm"></FormControl>
                     </div>
                 </div>
-
-                <div className="item-row">
+                <div className={radioClass}>
                     <div className="label-col">
                         <ControlLabel>Request ask by</ControlLabel>
                     </div>
                     <div className="form-col">
-
+                        <FormGroup>
+                            <Radio name="radioGroup" inline>
+                                Guichet
+                            </Radio>{' '}
+                            <Radio name="radioGroup" inline>
+                                Courrier
+                            </Radio>{' '}
+                            <Radio name="radioGroup" inline>
+                                Mail
+                            </Radio>
+                        </FormGroup>
                     </div>
                 </div>
 
-                <div className="item-row">
+                <div className={radioClass}>
                     <div className="label-col">
                         <ControlLabel>Give document by</ControlLabel>
                     </div>
                     <div className="form-col">
-
+                        <FormGroup>
+                            <Radio name="radioGroup" inline>
+                                Guichet
+                            </Radio>{' '}
+                            <Radio name="radioGroup" inline>
+                                Courrier
+                            </Radio>{' '}
+                            <Radio name="radioGroup" inline>
+                                Mail
+                            </Radio>
+                        </FormGroup>
                     </div>
                 </div>
-
-
-
-                <div className="item-row">
+                <hr></hr>
+                <div className={requestClass}>
                     <div className="label-col">
                         <ControlLabel>Request Object</ControlLabel>
                     </div>
                     <div className="form-col">
-                        <RequestObject></RequestObject>
                     </div>
+                </div>
+
+                <div className={requestClass}>
+                    <RequestObject></RequestObject>
                 </div>
 
             </Modal.Body>
@@ -554,8 +679,16 @@ function RequestFormModal(props) {
 
 function PlotsSelectionTable(props) {
 
+    let handleRowClick = (index)=> {
+        return () => {
+            props.onRowClick(index, props.tableIndex);
+            console.log("row clicked " + index);
+            console.log("table index " + props.tableIndex);
+        }
+    }
+
     return (
-        <Table condensed>
+        <Table condensed className="scrolled-table">
             <thead>
                 <tr>
                     <th>Town</th>
@@ -567,15 +700,15 @@ function PlotsSelectionTable(props) {
             </thead>
             <tbody>
                 {props.data.map((r, index)=>(
-                    <tr>
-                    <td>{r[0]}</td>
-                    <td>{r[1]}</td>
-                    <td>{r[2]}</td>
-                    <td>{r[3]}</td>
-                    <td>{r[4]}</td>
+                    <tr className={r[5] ? "selected-row" : "not-selected-row"}
+                        onClick={handleRowClick(index)}>
+                        <td>{r[0]}</td>
+                        <td>{r[1]}</td>
+                        <td>{r[2]}</td>
+                        <td>{r[3]}</td>
+                        <td>{r[4]}</td>
                     </tr>
                 ))}
-
             </tbody>
         </Table>
     )
@@ -587,7 +720,11 @@ function PlotSelectionTabContent(props) {
             <Tab.Content animation>
                 {props.data.map((value, index)=>(
                     <Tab.Pane eventKey={index}>
-                        <PlotsSelectionTable data={props.data[index]}></PlotsSelectionTable>
+                        <PlotsSelectionTable
+                            onRowClick={props.onRowClick}
+                            data={props.data[index]}
+                            tableIndex={index}>
+                        </PlotsSelectionTable>
                     </Tab.Pane>
                 ))}
             </Tab.Content>
@@ -696,29 +833,45 @@ function PlotSelectionTabsWithDropdown(props) {
 
 function PlotSelectionTopActionButtons(props) {
 
+
+    let isAtleastOneSelected = false;
+    if (props.data.length> 0) {
+        let data = props.data[props.active];
+        for (let i=0;i<data.length;i++) {
+            if (data[i][5]) {
+                isAtleastOneSelected = true;
+                break;
+            }
+        }
+    }
+
+    console.log("selected " + isAtleastOneSelected);
     return (
     <ButtonGroup className="pull-right">
         <OverlayTrigger placement="bottom" overlay={<Tooltip>{"Zoom"}</Tooltip>}>
             <Button
-                onClick={()=>{ props.onClick("zoom") }}
-            >
+                {...(!isAtleastOneSelected ? {disabled: 'true'} : {})}
+                onClick={()=>{ props.onClick("zoom") }}>
                 <Glyphicon glyph="zoom-in"/>
             </Button>
         </OverlayTrigger>
         <OverlayTrigger placement="bottom" overlay={<Tooltip>{"Landry Information"}</Tooltip>}>
             <Button
-                onClick={()=>{ props.onClick("landry") }}
-            >
+                {...(!isAtleastOneSelected ? {disabled: 'true'} : {})}
+                onClick={()=>{ props.onClick("landry") }}>
                 <Glyphicon glyph="th-list"/>
             </Button>
         </OverlayTrigger>
         <OverlayTrigger placement="bottom" overlay={<Tooltip>{"Information Form"}</Tooltip>}>
             <Button
+                {...(!isAtleastOneSelected ? {disabled: 'true'} : {})}
                 onClick={()=>{ props.onClick("information-form") }}
             ><Glyphicon glyph="info-sign"/></Button>
         </OverlayTrigger>
         <OverlayTrigger placement="bottom" overlay={<Tooltip>{"Export"}</Tooltip>}>
-            <DropdownButton pullRight title={<Glyphicon glyph="export"/>}>
+            <DropdownButton
+                {...(!isAtleastOneSelected ? {disabled: 'true'} : {})}
+                pullRight title={<Glyphicon glyph="export"/>}>
                 <MenuItem>Plot</MenuItem>
                 <MenuItem>Owners</MenuItem>
                 <MenuItem>Co-owners</MenuItem>
@@ -736,7 +889,6 @@ function PlotsSelection(props) {
 
     return (
         <div className={className}>
-            <hr/>
             <h3 className="pull-left">Plots Selection</h3>
             <PlotSelectionTopActionButtons {...props}>
             </PlotSelectionTopActionButtons>
@@ -750,7 +902,7 @@ function CoownershipSearch(props) {
     return (
         <div className={className}>
             <h3>Co-ownership Search</h3>
-            <div style={{padding: "10px"}}>
+            <div style={{padding: "10px", height: 242}}>
                 <div className="item-row">
                     <div className="label-col">
                         <ControlLabel>Town Municipality</ControlLabel>
@@ -796,20 +948,6 @@ function CoownershipSearch(props) {
     )
 }
 
-// var r = [];
-// for (var i=0;i<lines.length;i++)
-// {
-//     var l = lines[i].split(";");
-//     var arr = [];
-//     arr.push(l[1]);
-//     arr.push(l[7]);
-//     arr.push(l[2]+l[3]+" " + l[4]+" " + l[5]);
-//     arr.push(l[8]);
-//     arr.push(l[9]);
-//     r.push(arr);
-// }
-
-
 function PlotsSearch(props) {
     const unitOptions = [
         { value: '--', label: '--'},
@@ -830,7 +968,9 @@ function PlotsSearch(props) {
     return (
         <div className={className}>
             <h3>Plots Search</h3>
-            <Tabs defaultActiveKey={1} id="uncontrolled-tab-example">
+            <Tabs
+                className="not-scrolled-tab"
+                defaultActiveKey={1}>
                 <Tab eventKey={1} title="Reference">
                     <div className="item-row">
                         <div className="label-col">
@@ -851,7 +991,7 @@ function PlotsSearch(props) {
                     </div>
                 </Tab>
                 <Tab eventKey={2} title="Cadastral Addr."
-                    style={{height:220, overflow:"visible"}}>
+                    style={{height:220}}>
                     <div className="item-row">
                         <div className="label-col">
                             <ControlLabel>Town, Municipality</ControlLabel>
@@ -875,11 +1015,11 @@ function PlotsSearch(props) {
                             <ControlLabel>Road Number</ControlLabel>
                         </div>
                         <div className="form-col">
-                            <FormControl style={{height: 35, width:100, float:"left"}}type="text" bsSize="sm"></FormControl>
+                            <FormControl style={{height: 34, width:100, float:"left"}}type="text" bsSize="sm"></FormControl>
                             <Select
                             menuPortalTarget={document.querySelector('body')}
-                            style={{width:100 , float:"left"}} options={unitOptions}></Select>
-                            <span style={{marginLeft:5, marginTop:5}} className="text-muted ">ex. 4 TER</span>
+                            style={{marginLeft: 5, width:100 , float:"left"}} options={unitOptions}></Select>
+                            <div style={{float: "left", marginLeft:5, marginTop:5}} className="text-muted ">ex. 4 TER</div>
                         </div>
                     </div>
                 </Tab>
@@ -894,8 +1034,7 @@ function PlotsSearch(props) {
                         </div>
                     </div>
                 </Tab>
-                <Tab eventKey={4} title="Lot"
-                    style={{height:220, overflow:"visible"}}>
+                <Tab eventKey={4} title="Lot">
                     <div className="item-row">
                         <div className="label-col">
                             <ControlLabel>Identifiers</ControlLabel>
@@ -926,11 +1065,15 @@ function PlotsSearch(props) {
                         <div className="form-col">
                             <FormControl
                                 className="pull-left"
-                                style={{width:210}}
+                                style={{width:200}}
                                 placeholder="Load csv file" type="text" bsSize="sm">
                             </FormControl>
-                            <Button style={{width:100}}>Open File</Button>
-                            <div class="text-muted">This file must contains comptecommunal id list separate by space or coma</div>
+                            <Button style={{width:100, marginLeft:10}}>
+                                <Glyphicon style={{marginRight: 5}} glyph="add-folder"></Glyphicon>
+                                Open File</Button>
+                            <div
+                                style={{width:"100%",float:"left"}}
+                                class="text-muted">This file must contains comptecommunal id list separate by space or coma</div>
                         </div>
                     </div>
                 </Tab>
@@ -967,11 +1110,7 @@ function ReferencesList() {
     let handleChange = (index,elementIndex)=> {
         return (e) => {
             let i = items.slice();
-            // i[index]
-            // console.log("change captured" + index);
-            // console.log(e.target.value);
             i[index][elementIndex] = e.target.value;
-            // let i = items.splice(index, 1);
             setItems(i);
         }
     }
@@ -984,7 +1123,7 @@ function ReferencesList() {
 
     return (
         <>
-        <div style={{width:"100%", float:"left", marginBottom: 10}}>
+        <div style={{width:"100%", float:"left"}}>
 
             <Button
                 onClick={handleAdd}
@@ -996,29 +1135,31 @@ function ReferencesList() {
                 style={{marginLeft:6, marginTop:4}}
                 className="pull-left">Click to add a new reference</span>
         </div>
-        {items.map((v, index)=>(
-            <div style={{widthh:"100%", float:"left"}}>
-                <FormControl
-                    value={v[0]}
-                    className="pull-left"
-                    style={{width:120, marginTop:3, marginRight: 3}}
-                    onChange={handleChange(index,0)}
-                ></FormControl>
-                <FormControl
-                    value={v[1]}
-                    className="pull-left"
-                    style={{width:120, marginTop:3, marginRight: 3}}
-                    onChange={handleChange(index,1)}
-                ></FormControl>
-                <Button
-                    style={{marginTop:3, marginRight: 3}}
-                    className="pull-right"
-                    onClick={handleDelete(index)}
-                >
-                    <Glyphicon glyph="trash"></Glyphicon>
-                </Button>
-            </div>
-        ))}
+        <div style={{width:"100%", height:96, "overflowY": "auto"}}>
+            {items.map((v, index)=>(
+                <div style={{widthh:"100%", float:"left"}}>
+                    <FormControl
+                        value={v[0]}
+                        className="pull-left"
+                        style={{width:120, marginTop:3, marginRight: 3}}
+                        onChange={handleChange(index,0)}
+                    ></FormControl>
+                    <FormControl
+                        value={v[1]}
+                        className="pull-left"
+                        style={{width:120, marginTop:3, marginRight: 3}}
+                        onChange={handleChange(index,1)}
+                    ></FormControl>
+                    <Button
+                        style={{marginTop:3, marginRight: 3}}
+                        className="pull-right"
+                        onClick={handleDelete(index)}
+                    >
+                        <Glyphicon glyph="trash"></Glyphicon>
+                    </Button>
+                </div>
+            ))}
+        </div>
         </>
     )
 }
@@ -1055,7 +1196,7 @@ function StrList(props) {
 
     return (
         <>
-        <div style={{width:"100%", float:"left", marginBottom: 10}}>
+        <div style={{width:"100%", float:"left"}}>
 
             <Button
                 onClick={handleAdd}
@@ -1065,25 +1206,28 @@ function StrList(props) {
             </Button>
             <span
                 style={{marginLeft:6, marginTop:4}}
-                className="pull-left">Click to add a new owner</span>
+                className="pull-left">Click to add a new owner
+            </span>
         </div>
-        {items.map((v, index)=>(
-            <div style={{widthh:"100%", float:"left"}}>
-                <FormControl
-                    value={v}
-                    className="pull-left"
-                    style={{width:240, marginTop: 5, marginRight: 5}}
-                    onChange={handleChange(index)}
-                ></FormControl>
-                <Button
-                    style={{marginTop: 5, marginRight: 5}}
-                    className="pull-right"
-                    onClick={handleDelete(index)}
-                >
-                    <Glyphicon glyph="trash"></Glyphicon>
-                </Button>
-            </div>
-        ))}
+        <div style={{overflowY:"auto",width:"100%",height:96}}>
+            {items.map((v, index)=>(
+                <div style={{widthh:"100%", float:"left"}}>
+                    <FormControl
+                        value={v}
+                        className="pull-left"
+                        style={{width:240, marginTop: 5, marginRight: 5}}
+                        onChange={handleChange(index)}
+                    ></FormControl>
+                    <Button
+                        style={{marginTop: 5, marginRight: 5}}
+                        className="pull-right"
+                        onClick={handleDelete(index)}
+                    >
+                        <Glyphicon glyph="trash"></Glyphicon>
+                    </Button>
+                </div>
+            ))}
+        </div>
         </>
     )
 }
@@ -1093,8 +1237,12 @@ function OwnersSearch(props) {
     return (
         <div className={className}>
             <h3>Owners Search</h3>
-            <Tabs defaultActiveKey={1} id="uncontrolled-tab-example">
-                <Tab eventKey={1} title="User or birthname">
+            <Tabs
+                className="not-scrolled-tab"
+                defaultActiveKey={1} id="uncontrolled-tab-example">
+                <Tab
+
+                    eventKey={1} title="User or birthname">
                     <div className="item-row">
                         <div className="label-col">
                             <ControlLabel>Town, Municipality</ControlLabel>
@@ -1152,11 +1300,15 @@ function OwnersSearch(props) {
                         <div className="form-col">
                             <FormControl
                                 className="pull-left"
-                                style={{width:210}}
+                                style={{width:200}}
                                 placeholder="Load csv file" type="text" bsSize="sm">
                             </FormControl>
-                            <Button style={{width:100}}>Open File</Button>
-                            <div class="text-muted">This file must contains comptecommunal id list separate by space or coma</div>
+                            <Button style={{width:100, marginLeft:10}}>
+                                <Glyphicon style={{marginRight: 5}} glyph="add-folder"></Glyphicon>
+                                Open File</Button>
+                                <div
+                                style={{width:"100%",float:"left"}}
+                                class="text-muted">This file must contains comptecommunal id list separate by space or coma</div>
                         </div>
                     </div>
                 </Tab>
@@ -1194,7 +1346,7 @@ function RequestObject(props) {
     return (
         <div>
             <div className="pull-left" style={{width:"100%", marginBottom: 10}}>
-                <Button className="pull-right" onClick={handleAdd}>
+                <Button className="pull-right" onClick={handleAdd} style={{marginRight: 4}}>
                     <Glyphicon glyph="plus"></Glyphicon>
                 </Button>
                 <small style={{marginTop:5, marginRight: 10}}className="pull-right">
@@ -1243,6 +1395,21 @@ function RequestObjectItem(props) {
         { value: 'lot-co-owners', label: 'Lot co-owners' },
     ]
 
+    const sectionOptions = [
+        { value: '0', label: 'AZ' },
+        { value: '1', label: 'NE' }
+    ]
+
+    const communeOptions = [
+        { value: '0', label: 'AZ' },
+        { value: '1', label: 'NE' }
+    ]
+
+    const noOptions = [
+        { value: '0', label: '0' },
+        { value: '1', label: '1' },
+        { value: '2', label: '2' }
+    ]
 
     function ownerId() {
         return (
@@ -1250,7 +1417,7 @@ function RequestObjectItem(props) {
                 <FormControl
                     className="pull-left"
                     placeholder="Municipial account id"
-                    style={{height: 34, width:240}}
+                    style={{height: 34, width:248,margin:4}}
                 ></FormControl>
             </div>
         )
@@ -1259,21 +1426,28 @@ function RequestObjectItem(props) {
     function plot() {
         return (
             <div>
-                <Select
-                    placeholder="commune"
-                    style={{width:100, float:"left"}}>
-                </Select>
-                <Select
-                    placeholder="section"
-                    style={{width:100, float:"left"}}>
-                </Select>
-                <Select
-                    placeholder="no"
-                    style={{width:100, float:"left"}}></Select>
+                <div style={{width:120, float:"left", margin:4}}>
+                    <Select
+                        placeholder="commune"
+                        options={communeOptions}
+                        >
+                    </Select>
+                </div>
+                <div style={{width:120, float:"left", margin:4}}>
+                    <Select
+                        placeholder="section"
+                        options={sectionOptions}>
+                    </Select>
+                </div>
+                <div style={{width:120, float:"left", margin:4}}>
+                    <Select
+                        placeholder="no"
+                        options={noOptions}>
+                    </Select>
+                </div>
             </div>
         )
     }
-
 
     function coOwners() {
         return (
@@ -1281,12 +1455,12 @@ function RequestObjectItem(props) {
                 <FormControl
                     className="pull-left"
                     placeholder="Municipial account id"
-                    style={{height: 34, width:150}}
+                    style={{height: 34, width:120,margin:4}}
                 ></FormControl>
                 <FormControl
                     className="pull-left"
                     placeholder="Plot id"
-                    style={{height: 34, width:120}}
+                    style={{height: 34, width:120, margin:4 }}
                 ></FormControl>
             </div>
         )
@@ -1298,7 +1472,7 @@ function RequestObjectItem(props) {
                 <FormControl
                     className="pull-left"
                     placeholder="Municipial account id"
-                    style={{height: 34, width:200}}
+                    style={{height: 34, width:120,margin:4}}
                 ></FormControl>
             </div>
         )
@@ -1307,14 +1481,19 @@ function RequestObjectItem(props) {
     function owner() {
         return (
             <div>
-                <Select
-                    placeholder="commune"
-                    style={{width:100, float:"left"}}>
-                </Select>
-                <Select
-                    placeholder="proprietaire"
-                    style={{width:100, float:"left"}}>
-                </Select>
+                <div style={{width:120, float:"left", margin:4}}>
+                    <Select
+                        placeholder="commune"
+                        options={communeOptions}
+                        >
+                    </Select>
+                </div>
+                <div style={{width:120, float:"left", margin:4}}>
+                    <Select
+                        placeholder="proprietaire"
+                        options={sectionOptions}>
+                    </Select>
+                </div>
             </div>
         )
     }
@@ -1322,14 +1501,19 @@ function RequestObjectItem(props) {
     function cadastrappDemandei() {
         return (
             <div>
-                <Select
-                    placeholder="commune"
-                    style={{width:100, float:"left"}}>
-                </Select>
-                <Select
-                    placeholder="proprietaire"
-                    style={{width:100, float:"left"}}>
-                </Select>
+                <div style={{width:120, float:"left", margin:4}}>
+                    <Select
+                        placeholder="commune"
+                        options={communeOptions}
+                        >
+                    </Select>
+                </div>
+                <div style={{width:120, float:"left", margin:4}}>
+                    <Select
+                        placeholder="proprietaire"
+                        options={sectionOptions}>
+                    </Select>
+                </div>
             </div>
         )
     }
@@ -1337,21 +1521,31 @@ function RequestObjectItem(props) {
     function lotCoOwners() {
         return (
             <div>
-                <Select
-                    placeholder="commune"
-                    style={{width:90, float:"left"}}>
-                </Select>
-                <Select
-                    placeholder="section"
-                    style={{width:70, float:"left"}}>
-                </Select>
-                <Select
-                    placeholder="no"
-                    style={{width:50, float:"left"}}></Select>
-                <Select
-                    placeholder="proprietaire"
-                    style={{width:100, float:"left"}}>
-                </Select>
+                <div style={{width:120, float:"left", margin:4}}>
+                    <Select
+                        placeholder="commune"
+                        options={communeOptions}
+                        >
+                    </Select>
+                </div>
+                <div style={{width:120, float:"left", margin:4}}>
+                    <Select
+                        placeholder="section"
+                        options={sectionOptions}>
+                    </Select>
+                </div>
+                <div style={{width:120, float:"left", margin:4}}>
+                    <Select
+                        placeholder="no"
+                        options={noOptions}>
+                    </Select>
+                </div>
+                <div style={{width:120, float:"left", margin:4}}>
+                    <Select
+                        placeholder="proprietaire"
+                        options={sectionOptions}>
+                    </Select>
+                </div>
             </div>
         )
     }
@@ -1380,13 +1574,14 @@ function RequestObjectItem(props) {
     return (
         <div className="pull-left" style={{width: "100%"}}>
             <Select
-                style={{width:120, float:"left"}}
+                style={{width:120, float:"left",margin:4}}
                 options={requestOptions}
                 value={props.value}
                 onChange={handleChange}>
             </Select>
             <InputTemplate></InputTemplate>
-            <Button className="pull-right">
+            <Button className="pull-right"
+                style={{margin:4}}>
                 <Glyphicon
                     glyph="trash"
                     onClick={handleDelete}>
@@ -1411,6 +1606,8 @@ function CadastrappMockup() {
     let [activeToolbar, setActiveToolbar] = useState("");
     let [activeSelectionTab, setActiveSelectionTab] = useState(0);
     let [plotSelectionData, setPlotSelectionData] = useState([]);
+    let [selectedBuildings, setSelectedBuildings] = useState({});
+    let [expandedPanel, setExpandedPanel] = useState({});
     let [searchIndices, setSearchIndices] = useState({"owner": -1, "co-owner": -1, "plot": -1});
 
     // fix this
@@ -1420,7 +1617,6 @@ function CadastrappMockup() {
 
     // remove this
     document.addEventListener("open-cadastrapp", f)
-
 
     const handlePlotsZoom = () => {
 
@@ -1437,6 +1633,21 @@ function CadastrappMockup() {
 
     const handleInformationFormClose = () => {
         setIsInformationFormShown(false);
+        setExpandedPanel({});
+    }
+
+    const handleBuildingRowClick = (tabIndex, plotIndex, buildingIndex) => {
+
+    }
+
+    const handlePanelExpand = (index) => {
+        let exp = {...expandedPanel};
+        if (exp[index]) {
+            exp[index] = false;
+        } else {
+            exp[index] = true;
+        }
+        setExpandedPanel(exp);
     }
 
     const handlePreferencesModalClose = () => {
@@ -1654,6 +1865,12 @@ function CadastrappMockup() {
         setActiveSelectionTab(selectionData.length - 1);
     }
 
+    const handleRowClick = (rowIndex, tableIndex) => {
+        let selectionData = plotSelectionData.slice();
+        selectionData[tableIndex][rowIndex][5] = !selectionData[tableIndex][rowIndex][5];
+        setPlotSelectionData(selectionData);
+    }
+
     const handlePlotsSelectionTabChange = (tabIndex)=> {
         setActiveSelectionTab(tabIndex);
     }
@@ -1704,6 +1921,7 @@ function CadastrappMockup() {
                     onTabDelete={handlePlotsSelectionDeleteTab}
                     onTabChange={handlePlotsSelectionTabChange}
                     onNewTab={handlePlotsSelectionNewTab}
+                    onRowClick={handleRowClick}
                     data={plotSelectionData}
                     active={activeSelectionTab}
                 ></PlotsSelection>
@@ -1712,8 +1930,13 @@ function CadastrappMockup() {
                     onClose={handleRequestFormClose}
                 ></RequestFormModal>
                 <InformationFormModal
+                    expanded={expandedPanel}
+                    active={activeSelectionTab}
+                    data={plotSelectionData}
                     isShown={isInformationFormShown}
+                    onBuildingRowClick={handleBuildingRowClick}
                     onClose={handleInformationFormClose}
+                    onPanelExpand={handlePanelExpand}
                 ></InformationFormModal>
                 <PreferencesModal
                     isShown={isPreferencesModalShown}

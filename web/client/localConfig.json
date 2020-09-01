@@ -173,7 +173,8 @@
       }
     },
     "plugins": {
-        "mobile": [{
+        "mobile": [ "CadastrappMockup",
+            {
                 "name": "Map",
                 "cfg": {
                     "mapOptions": {
