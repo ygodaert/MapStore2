@@ -339,12 +339,10 @@ function InformationFormModal(props) {
         }
     }
 
-
-
     return (
         <Modal
-            dialogClassName="cadastrapp-modal"
-            bodyClassName="overflow-hidden"
+            style={{maxHeight: "100%", overflowY: "auto"}}
+            dialogClassName="cadastrapp-modal cadastrapp-information-modal"
             show={props.isShown}
             onHide={props.onClose}>
             <Modal.Header closeButton>
@@ -677,41 +675,89 @@ function RequestFormModal(props) {
         </Modal>)
 }
 
-function PlotsSelectionTable(props) {
+function CustomCheckbox(props) {
 
-    let handleRowClick = (index)=> {
-        return () => {
-            props.onRowClick(index, props.tableIndex);
-            console.log("row clicked " + index);
-            console.log("table index " + props.tableIndex);
+    const OUTER = 15;
+    const INNER = 7;
+    const SPACE = 3;
+    let outerStyle;
+    let innerStyle;
+
+    if (props.selected) {
+        outerStyle= {
+            marginTop: SPACE,
+            width: OUTER,
+            height: OUTER,
+            background: "#fff",
+            border: "solid 1px #078aa3"
+        }
+        innerStyle= {
+            width:INNER, height: INNER, background: "#078aa3", margin: SPACE
+        }
+    } else {
+        outerStyle= {
+            marginTop: SPACE,
+            width: OUTER,
+            height: OUTER,
+            background: "#fff",
+            border: "solid 1px #ddd"
+        }
+        innerStyle= {
+            width:INNER, height: INNER, background: "#fff", margin: SPACE
         }
     }
 
     return (
-        <Table condensed className="scrolled-table">
-            <thead>
-                <tr>
-                    <th>Town</th>
-                    <th>Section</th>
-                    <th>Cadastral Address</th>
-                    <th>Plan Number</th>
-                    <th>Surface DGFIP in m2</th>
-                </tr>
-            </thead>
-            <tbody>
-                {props.data.map((r, index)=>(
-                    <tr className={r[5] ? "selected-row" : "not-selected-row"}
-                        onClick={handleRowClick(index)}>
-                        <td>{r[0]}</td>
-                        <td>{r[1]}</td>
-                        <td>{r[2]}</td>
-                        <td>{r[3]}</td>
-                        <td>{r[4]}</td>
-                    </tr>
-                ))}
-            </tbody>
-        </Table>
+        <div style={outerStyle}>
+            <div style={innerStyle}></div>
+        </div>
     )
+}
+
+function PlotsSelectionTable(props) {
+
+    const handleRowClick = (index)=> {
+        props.onRowClick(index, props.tableIndex);
+        console.log("row clicked " + index);
+        console.log("table index " + props.tableIndex);
+    }
+
+    const headers = ["Town", "Section", "Cadastrall Addr.", "Plan Number", "Surface DGFIP in m2"]
+    const widths = [10,15,30,20,20];
+    return (
+        <SelectableTable
+            widths={widths}
+            data={props.data}
+            header={headers}
+            onClick={handleRowClick}>
+        </SelectableTable>
+    )
+
+    // return (
+    //     <Table condensed className="scrolled-table">
+    //         <thead>
+    //             <tr>
+    //                 <th>Town</th>
+    //                 <th>Section</th>
+    //                 <th>Cadastral Address</th>
+    //                 <th>Plan Number</th>
+    //                 <th>Surface DGFIP in m2</th>
+    //             </tr>
+    //         </thead>
+    //         <tbody>
+    //             {props.data.map((r, index)=>(
+    //                 <tr className={r[5] ? "selected-row" : "not-selected-row"}
+    //                     onClick={handleRowClick(index)}>
+    //                     <td>{r[0]}</td>
+    //                     <td>{r[1]}</td>
+    //                     <td>{r[2]}</td>
+    //                     <td>{r[3]}</td>
+    //                     <td>{r[4]}</td>
+    //                 </tr>
+    //             ))}
+    //         </tbody>
+    //     </Table>
+    // )
 }
 
 function PlotSelectionTabContent(props) {
@@ -850,7 +896,6 @@ function PlotSelectionTopActionButtons(props) {
     <ButtonGroup className="pull-right">
         <OverlayTrigger placement="bottom" overlay={<Tooltip>{"Zoom"}</Tooltip>}>
             <Button
-                {...(!isAtleastOneSelected ? {disabled: 'true'} : {})}
                 onClick={()=>{ props.onClick("zoom") }}>
                 <Glyphicon glyph="zoom-in"/>
             </Button>
@@ -1016,9 +1061,11 @@ function PlotsSearch(props) {
                         </div>
                         <div className="form-col">
                             <FormControl style={{height: 34, width:100, float:"left"}}type="text" bsSize="sm"></FormControl>
-                            <Select
-                            menuPortalTarget={document.querySelector('body')}
-                            style={{marginLeft: 5, width:100 , float:"left"}} options={unitOptions}></Select>
+                            <div className="pull-left">
+                                <Select
+                                menuPortalTarget={document.querySelector('body')}
+                                style={{marginLeft: 5, width:100}} options={unitOptions}></Select>
+                            </div>
                             <div style={{float: "left", marginLeft:5, marginTop:5}} className="text-muted ">ex. 4 TER</div>
                         </div>
                     </div>
@@ -1135,7 +1182,7 @@ function ReferencesList() {
                 style={{marginLeft:6, marginTop:4}}
                 className="pull-left">Click to add a new reference</span>
         </div>
-        <div style={{width:"100%", height:96, "overflowY": "auto"}}>
+        <div style={{width:"100%", height: "calc(50vh - 290px)", minHeight:96, "overflowY": "auto"}}>
             {items.map((v, index)=>(
                 <div style={{widthh:"100%", float:"left"}}>
                     <FormControl
@@ -1209,9 +1256,9 @@ function StrList(props) {
                 className="pull-left">Click to add a new owner
             </span>
         </div>
-        <div style={{overflowY:"auto",width:"100%",height:96}}>
+        <div style={{width:"100%", height: "calc(50vh - 290px)", minHeight:96, "overflowY": "auto"}}>
             {items.map((v, index)=>(
-                <div style={{widthh:"100%", float:"left"}}>
+                <div style={{width:"100%", float:"left"}}>
                     <FormControl
                         value={v}
                         className="pull-left"
@@ -1573,12 +1620,16 @@ function RequestObjectItem(props) {
 
     return (
         <div className="pull-left" style={{width: "100%"}}>
-            <Select
+            <div
                 style={{width:120, float:"left",margin:4}}
-                options={requestOptions}
-                value={props.value}
-                onChange={handleChange}>
-            </Select>
+            >
+                <Select
+                    options={requestOptions}
+                    value={props.value}
+                    onChange={handleChange}>
+                </Select>
+
+            </div>
             <InputTemplate></InputTemplate>
             <Button className="pull-right"
                 style={{margin:4}}>
@@ -1591,6 +1642,64 @@ function RequestObjectItem(props) {
     );
 }
 
+
+function SelectableTable(props) {
+
+    const handleClick = (index)=> {
+        return ()=> {
+            console.log("clicked", index);
+            props.onClick(index);
+        }
+    }
+
+    function generateRow(r, index) {
+        if (r.length == 0)
+            return (<></>);
+
+        let className = r[5] ? "selected" : "";
+        return (
+            <div
+                onClick={handleClick(index)}
+                className={"table-row " + className}>
+                <div className="cell" style={{width:"5%"}}>
+                    <CustomCheckbox selected={r[5]}></CustomCheckbox>
+                </div>
+                {r.map((cell, index)=>{
+                    let w = props.widths[index] + "%";
+                    return (
+                        <div style={{width:w}} className="cell">{cell}</div>
+                    )
+                })}
+            </div>
+        )
+    }
+
+    console.log("table data");
+    console.log(props.data);
+    return (
+    <>
+        <div className="header">
+            <div className="cell" style={{width:"5%"}}>
+                <CustomCheckbox selected={true}></CustomCheckbox>
+            </div>
+            {props.header.map((e, index)=> {
+                let w = props.widths[index] + "%";
+                return (
+                <div style={{width:w}} className="cell">
+                    {e}
+                </div>
+            )})}
+        </div>
+        <div>
+        {props.data.map((e, index)=> {
+            return generateRow(e, index);
+        })}
+        </div>
+    </>
+    )
+}
+
+// this is the entry point for the plugin
 function CadastrappMockup() {
 
     let [isShown , setIsShown] = useState(true);
