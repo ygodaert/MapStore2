@@ -523,7 +523,6 @@ function RequestFormModal(props) {
     }
 
     const handleChange = (item)=> {
-        console.log(item.value);
         setUserType(item.value)
 
         if (item.value == 3)
@@ -708,7 +707,9 @@ function CustomCheckbox(props) {
     }
 
     return (
-        <div style={outerStyle}>
+        <div
+            onClick={props.onCheckClick}
+            style={outerStyle}>
             <div style={innerStyle}></div>
         </div>
     )
@@ -716,19 +717,22 @@ function CustomCheckbox(props) {
 
 function PlotsSelectionTable(props) {
 
-    const handleRowClick = (index)=> {
+    const handleRowClick = (index) => {
         props.onRowClick(index, props.tableIndex);
-        console.log("row clicked " + index);
-        console.log("table index " + props.tableIndex);
     }
 
-    const headers = ["Town", "Section", "Cadastrall Addr.", "Plan Number", "Surface DGFIP in m2"]
+    const handleAllClick = () => {
+        props.onAllClick(props.tableIndex);
+    }
+
+    const headers = ["Town", "Section", "Cadastrall Addr.", "Plan Number", "Surface DGFIP in m2"];
     const widths = [10,15,30,20,20];
     return (
         <SelectableTable
             widths={widths}
             data={props.data}
             header={headers}
+            onAllClick={handleAllClick}
             onClick={handleRowClick}>
         </SelectableTable>
     )
@@ -767,6 +771,7 @@ function PlotSelectionTabContent(props) {
                 {props.data.map((value, index)=>(
                     <Tab.Pane eventKey={index}>
                         <PlotsSelectionTable
+                            onAllClick={props.onAllClick}
                             onRowClick={props.onRowClick}
                             data={props.data[index]}
                             tableIndex={index}>
@@ -1647,7 +1652,6 @@ function SelectableTable(props) {
 
     const handleClick = (index)=> {
         return ()=> {
-            console.log("clicked", index);
             props.onClick(index);
         }
     }
@@ -1656,13 +1660,17 @@ function SelectableTable(props) {
         if (r.length == 0)
             return (<></>);
 
-        let className = r[5] ? "selected" : "";
+
+        let className = r[r.length - 1] ? "selected" : "";
         return (
             <div
                 onClick={handleClick(index)}
                 className={"table-row " + className}>
                 <div className="cell" style={{width:"5%"}}>
-                    <CustomCheckbox selected={r[5]}></CustomCheckbox>
+                    <CustomCheckbox
+                        onCheckClick={()=>{}}
+                        selected={r[r.length - 1]}>
+                    </CustomCheckbox>
                 </div>
                 {r.map((cell, index)=>{
                     let w = props.widths[index] + "%";
@@ -1674,13 +1682,17 @@ function SelectableTable(props) {
         )
     }
 
-    console.log("table data");
-    console.log(props.data);
+    let allSelected = true;
+    for (let i=0;i<props.data.length;i++) {
+        let p = props.data[i];
+        if (!p[p.length - 1])
+            allSelected = false;
+    }
     return (
     <>
         <div className="header">
             <div className="cell" style={{width:"5%"}}>
-                <CustomCheckbox selected={true}></CustomCheckbox>
+                <CustomCheckbox onCheckClick={props.onAllClick} selected={allSelected}></CustomCheckbox>
             </div>
             {props.header.map((e, index)=> {
                 let w = props.widths[index] + "%";
@@ -1771,7 +1783,6 @@ function CadastrappMockup() {
         alert("Plot search is executed, random data is appended to plots selection");
         let selectionData = plotSelectionData.slice();
         let indices = {...searchIndices}
-        console.log(searchIndices);
 
         if (searchIndices["plot"] == -1) {
             selectionData.push([randomPlot()]);
@@ -1791,7 +1802,6 @@ function CadastrappMockup() {
         alert("Owner search is executed");
         let selectionData = plotSelectionData.slice();
         let indices = {...searchIndices}
-        console.log(searchIndices);
 
         if (searchIndices["owner"] == -1) {
             selectionData.push([randomPlot()]);
@@ -1812,7 +1822,6 @@ function CadastrappMockup() {
         alert("Coownership search is executed");
         let selectionData = plotSelectionData.slice();
         let indices = {...searchIndices}
-        console.log(searchIndices);
 
         if (searchIndices["co-owner"] == -1) {
             selectionData.push([randomPlot()]);
@@ -1839,8 +1848,6 @@ function CadastrappMockup() {
         break;
 
         case "select-by-point":
-            console.log(selectionData);
-            console.log(selectionData.length);
             alert("The user selected a plot by a point tool. Adding (1) random to plot data to 'Plots Selection' section");
             if (selectionData.length == 0)
                 selectionData = [[]];
@@ -1974,6 +1981,27 @@ function CadastrappMockup() {
         setActiveSelectionTab(selectionData.length - 1);
     }
 
+    const handleAllRowClick = (tableIndex) => {
+        let selectionData = plotSelectionData.slice();
+
+        let data = selectionData[tableIndex];
+        let allSelected = true;
+
+        for (let i=0;i<data.length;i++) {
+            if (!data[i][data[i].length - 1])
+                allSelected = false;
+        }
+
+        if (allSelected) {
+            for (let i=0;i<data.length;i++)
+                data[i][data[i].length - 1] = false;
+        } else {
+            for (let i=0;i<data.length;i++)
+                data[i][data[i].length - 1] = true;
+        }
+        setPlotSelectionData(selectionData);
+    }
+
     const handleRowClick = (rowIndex, tableIndex) => {
         let selectionData = plotSelectionData.slice();
         selectionData[tableIndex][rowIndex][5] = !selectionData[tableIndex][rowIndex][5];
@@ -2030,6 +2058,7 @@ function CadastrappMockup() {
                     onTabDelete={handlePlotsSelectionDeleteTab}
                     onTabChange={handlePlotsSelectionTabChange}
                     onNewTab={handlePlotsSelectionNewTab}
+                    onAllClick={handleAllRowClick}
                     onRowClick={handleRowClick}
                     data={plotSelectionData}
                     active={activeSelectionTab}
