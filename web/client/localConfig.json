@@ -173,7 +173,7 @@
       }
     },
     "plugins": {
-        "mobile": [ "CadastrappMockup",
+        "mobile": [ "CadastrappMockup", "LandPlanningMockup",
             {
                 "name": "Map",
                 "cfg": {
@@ -281,7 +281,7 @@
             },
             "FeedbackMask"
         ],
-        "desktop": [ "Details", "CadastrappMockup",
+        "desktop": [ "Details", "CadastrappMockup", "LandPlanningMockup",
           {
             "name": "Map",
             "cfg": {

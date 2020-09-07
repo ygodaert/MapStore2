@@ -208,6 +208,37 @@
         text-decoration: none;
     }
 
+    // table related css
+    .table-row{
+        float: left;
+        width: 100%;
+        cursor: pointer;
+        border-bottom: solid 1px #ddd;
+    }
+
+    .table-row:hover{
+        color: #078aa3 !important;
+        background: #f2f2f2;
+    }
+
+    .table-row.selected{
+        color: #078aa3 !important;
+        background: #f2f2f2;
+        font-weight: bold;
+    }
+
+    .cell{
+        padding: 4px;
+        float: left;
+    }
+
+    .header{
+        float: left;
+        border-bottom: solid 1px #ddd;
+        font-weight: bold;
+        width: 100%;
+    }
+
 
 }
 
@@ -248,4 +279,14 @@
 
 .Select-menu-outer{
     width: 160px !important;
+}
+
+
+.land-planning-mockup{
+    position: fixed;
+    height: 52px;
+    width: 208px;
+    top: 58px;
+    right: 5px;
+    z-index: 10000000;
 }

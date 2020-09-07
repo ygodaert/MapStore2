@@ -125,7 +125,8 @@ module.exports = {
         ZoomAllPlugin: require('../plugins/ZoomAll'),
         ZoomInPlugin: require('../plugins/ZoomIn'),
         ZoomOutPlugin: require('../plugins/ZoomOut'),
-        CadastrappMockupPlugin: require('../plugins/CadastrappMockup').default
+        CadastrappMockupPlugin: require('../plugins/CadastrappMockup').default,
+        LandPlanningMockupPlugin: require('../plugins/LandPlanningMockup').default
     },
     requires: {
         ReactSwipe: require('react-swipeable-views').default,
