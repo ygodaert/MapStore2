@@ -132,8 +132,6 @@ function InformationFormPlotInformationRadio(props) {
     </div>)
 }
 
-
-
 function InformationFormPropertyListRadio(props) {
 
     let className = props.isShown ? "" : "collapse";
@@ -310,7 +308,6 @@ function InformationFormOwnersContent() {
                 onAllClick={handleAllClick}
             ></SelectableTable>
         </>
-
     )
 }
 
@@ -367,7 +364,6 @@ function InformationFormModalContent() {
     }
 
     const handleBuildingRowDoubleClick = (index) => {
-        console.log("double click");
         let d = buildingTableData.slice();
 
         for (let i=0;i<d.length;i++) {
@@ -902,32 +898,6 @@ function PlotsSelectionTable(props) {
             onClick={handleRowClick}>
         </SelectableTable>
     )
-
-    // return (
-    //     <Table condensed className="scrolled-table">
-    //         <thead>
-    //             <tr>
-    //                 <th>Town</th>
-    //                 <th>Section</th>
-    //                 <th>Cadastral Address</th>
-    //                 <th>Plan Number</th>
-    //                 <th>Surface DGFIP in m2</th>
-    //             </tr>
-    //         </thead>
-    //         <tbody>
-    //             {props.data.map((r, index)=>(
-    //                 <tr className={r[5] ? "selected-row" : "not-selected-row"}
-    //                     onClick={handleRowClick(index)}>
-    //                     <td>{r[0]}</td>
-    //                     <td>{r[1]}</td>
-    //                     <td>{r[2]}</td>
-    //                     <td>{r[3]}</td>
-    //                     <td>{r[4]}</td>
-    //                 </tr>
-    //             ))}
-    //         </tbody>
-    //     </Table>
-    // )
 }
 
 function PlotSelectionTabContent(props) {
@@ -1062,7 +1032,6 @@ function PlotSelectionTopActionButtons(props) {
         }
     }
 
-    console.log("selected " + isAtleastOneSelected);
     return (
     <ButtonGroup className="pull-right">
         <OverlayTrigger placement="bottom" overlay={<Tooltip>{"Zoom"}</Tooltip>}>
@@ -1319,7 +1288,6 @@ function ReferencesList() {
     let handleDelete = (index)=> {
         return () => {
             let i = items.slice();
-            console.log("deleting " + index);
             i.splice(index, 1);
             setItems(i);
         }
@@ -1388,7 +1356,6 @@ function StrList(props) {
     let handleDelete = (index)=> {
         return () => {
             let i = items.slice();
-            console.log("deleting " + index);
             i.splice(index, 1);
             setItems(i);
         }
@@ -1397,11 +1364,7 @@ function StrList(props) {
     let handleChange = (index)=> {
         return (e) => {
             let i = items.slice();
-            // i[index]
-            // console.log("change captured" + index);
-            // console.log(e.target.value);
             i[index] = e.target.value;
-            // let i = items.splice(index, 1);
             setItems(i);
         }
     }
@@ -1786,7 +1749,6 @@ function RequestObjectItem(props) {
 
     const handleChange = (item)=> {
         props.onChange(props.dataId, item.value);
-        // setType(item.value);
     }
 
     return (
@@ -1958,16 +1920,12 @@ function CadastrappMockup() {
     let [expandedPanel, setExpandedPanel] = useState({});
     let [searchIndices, setSearchIndices] = useState({"owner": -1, "co-owner": -1, "plot": -1});
 
-    // fix this
-    let f = ()=> {
-        setIsShown(true);
-    }
-
     // remove this
-    document.addEventListener("open-cadastrapp", f)
+    document.addEventListener("open-cadastrapp", ()=> {
+        setIsShown(true);
+    });
 
     const handlePlotsZoom = () => {
-
         alert("The user clicks on a selection zoom");
     }
 
@@ -2143,12 +2101,10 @@ function CadastrappMockup() {
         break;
 
         case "request-form":
-            // setActiveToolbar("");
             setIsRequestFormShown(true);
         break;
 
         case "preferences":
-            // setActiveToolbar("");
             setIsPreferencesModalShown(true);
         break;
 
@@ -2158,11 +2114,9 @@ function CadastrappMockup() {
         break;
 
         }
-        console.log(action);
     }
 
     const handlePlotsSelectionClick = (action) => {
-        console.log(action);
         switch(action) {
         case "information-form":
             setIsInformationFormShown(true);
@@ -2308,8 +2262,6 @@ function CadastrappMockup() {
                     active={activeSelectionTab}
                     data={plotSelectionData}
                     isShown={isInformationFormShown}
-                    onCoOwnerRowClick={handleCoOwnerRowClick}
-                    onOwnerRowClick={handleOwnerRowClick}
                     onBuildingRowClick={handleBuildingRowClick}
                     onClose={handleInformationFormClose}
                     onPanelExpand={handlePanelExpand}
