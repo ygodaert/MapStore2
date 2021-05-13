@@ -7,27 +7,35 @@
   */
 
 const url = require('url');
-const {endsWith} = require('lodash');
+const {endsWith, isString, isArray, random} = require('lodash');
+
+const createWPSUrl = (urlToParse, options) => {
+    const parsed = url.parse(urlToParse, true);
+    let newPathname = parsed.pathname;
+    if (endsWith(parsed.pathname, "wfs") || endsWith(parsed.pathname, "wms")) {
+        newPathname = parsed.pathname.replace(/(wms|ows|wfs|wps)$/, "wps");
+    }
+    return url.format({
+        ...parsed,
+        search: null,
+        pathname: newPathname,
+        query: {
+            service: "WPS",
+            ...options,
+            ...parsed.query
+        }
+    });
+};
 
 module.exports = {
     getWPSURL: (urlToParse, options) => {
-        if (urlToParse) {
-            const parsed = url.parse(urlToParse, true);
-            let newPathname = parsed.pathname;
-            if (endsWith(parsed.pathname, "wfs") || endsWith(parsed.pathname, "wms")) {
-                newPathname = parsed.pathname.replace(/(wms|ows|wfs|wps)$/, "wps");
-            }
-            return url.format({
-                ...parsed,
-                search: null,
-                pathname: newPathname,
-                query: {
-                    service: "WPS",
-                    ...options,
-                    ...parsed.query
-                }
-            });
+        if (urlToParse && isString(urlToParse)) {
+            return createWPSUrl(urlToParse, options);
 
+        }
+        if (isArray(urlToParse)) {
+            const randomIndex = random(0, urlToParse.length - 1);
+            return createWPSUrl(urlToParse[randomIndex], options);
         }
         return urlToParse;
     }
