@@ -544,7 +544,8 @@
           "sunlightOption": "Zonlicht",
           "dateTimeOption": "Specifieke UTC Datum-Tijd",
           "dateTimePlaceholder": "Selecteer de datum en tijd"
-        }
+        },
+        "collisionDetection": "Activeer terreinbotsingsdetectie"
       },
       "thumbnailError": {
         "error403": "Er is een fout opgetreden bij het verwijderen van de miniatuur",
@@ -4355,6 +4356,10 @@
         "noContentYetContent": "Deze catalogus heeft nog geen gepubliceerde uitgelichte inhoud. <br/> We werken eraan om het te vullen met geweldige bronnen. <br/><br/>Blijf op de hoogte!",
         "noPublicContentTitle": "Uitgelichte Resources",
         "noPublicContentContent": "Deze catalogus heeft geen uitgelichte bronnen."
+      },
+      "groupsSection": {
+        "noContentYetTitle": "Geen gebruikersgroepen",
+        "noContentYetContent": "Er zijn geen gebruikersgroepen. Klik op \"Nieuwe Groep\" om er een te maken"
       },
       "mapsFilter": "Kaarten",
       "dashboardsFilter": "Dashboards",
