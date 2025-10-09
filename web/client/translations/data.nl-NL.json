@@ -799,7 +799,8 @@
       "projection": "Coördinaatsysteem",
       "projectionmismatch": "Incompatibiliteit tussen coördinatensysteem op het kaartscherm en het coördinatensysteem geselecteerd voor de kaartafdruk",
       "graticule": "voeg gelabeld grid toe",
-      "additionalLayers": "Voeg overlays toe"
+      "additionalLayers": "Voeg overlays toe",
+      "createScaleOption": "Voeg nieuwe schaal toe aan lijst"
     },
     "backgroundSwitcher": {
       "tooltip": "Selectie van de achtergrondkaart"
@@ -1532,7 +1533,7 @@
       "title": "momentopname-voorbeeld",
       "save": "Opslaan",
       "tooltip": "Sla een momentopname van de kaart op.",
-      "googleBingError": "Google- en Bing-lagen zijn vanwege auteursrechtbeperkingen niet beschikbaar voor de momentopname.",
+      "googleBingError": "Google-lagen zijn vanwege auteursrechtbeperkingen niet beschikbaar voor de momentopname.",
       "downloadingSnapshots": "in afwachting van het genereren van snapshots",
       "date": "Datum",
       "layers": "Lagen",
@@ -2132,6 +2133,7 @@
           "useTheSelectedLayer": "Gebruik de geselecteerde laag",
           "connectToAMap": "Maak verbinding met een andere widget",
           "connectToTheMap": "Maak verbinding met de andere widget",
+          "connectToTheTable": "Maak verbinding met de tabel",
           "selectMapToConnect": "Selecteer de widget om verbinding te maken",
           "clearConnection": "Verwijder verbinding",
           "disableConnectToMap": "Operatie niet beschikbaar",
@@ -2354,7 +2356,8 @@
           "category": "Categorie",
           "log": "Logaritme",
           "date": "Datum"
-        }
+        },
+        "showCurrentTime": "Huidige tijd op de as weergeven"
       },
       "tray": {
         "title": "Widgets",
@@ -2772,7 +2775,8 @@
       "minSourceValue": "Minimumwaarde brondata",
       "maxSourceValue": "Maximumwaarde brondata",
       "customParams": "Aangepaste Parameters",
-      "wrongFormatMsg": "De ingevoerde configuratie heeft een ongeldig formaat !!"
+      "wrongFormatMsg": "De ingevoerde configuratie heeft een ongeldig formaat !!",
+      "style": "Stijl"
     },
     "playback": {
       "settings": {
